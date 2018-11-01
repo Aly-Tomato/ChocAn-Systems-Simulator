@@ -3,12 +3,19 @@ This project is used to provide data processing portions of the ChocAn system (a
 	Requirements Doc:   https://docs.google.com/document/d/1o3gu3sPVz-Qbbxp4Pi2eDYI_ijRIRFU5tgz03PTzfm0/edit?usp=sharing
 	Design Doc:         https://docs.google.com/document/d/1i6cvvDyHuR04P4A1nUWZgMZvVRzFk_xQmMkc9EyHeaI/edit?usp=sharing
 
+Compilation Conventions
+	The system should be able to be be jar-ed with the below line without any errors or warnings.
+		jar -cfe ChocAnSystem.jar ChocAnSystem *.class *.java
+	The system should be runnable with ChocAnSystem.jar, member_directory, and provider_directory in the same directory with the line below.
+		java -jar ChocAnSystem.jar
+
 Coding Conventions
 	Tab, so can set to whatever the individual wants.
 	Try to keep functions ~25 lines max.
 	Some level of avoiding nesting.
 	No ternary operator.
 	camelCase.
+	Declare variables at the top of the scope they are in.
 	Descriptive variable names.
 	Javadocs are required for public functions.
 	Have helper functions be in order of appearance after the public it’s in
