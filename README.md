@@ -17,6 +17,9 @@ Compilation Conventions (assumes Unix system)
 	The system should be runnable with ChocAnSystem.jar, member_directory, and provider_directory in the same directory with the line below.
 		java -jar ChocAnSystem.jar
 
+	The system's javadocs should be generated with the below line without any errors or warnings.
+		javadoc -d chocAnJavadocs *.java
+
 
 Coding Conventions
 	Tab, so the spacing can set to whatever the individual wants.
