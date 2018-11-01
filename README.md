@@ -10,7 +10,7 @@ Compilation Conventions
 		java -jar ChocAnSystem.jar
 
 Coding Conventions
-	Tab, so can set to whatever the individual wants.
+	Tab, so the spacing can set to whatever the individual wants.
 	Try to keep functions ~25 lines max.
 	Some level of avoiding nesting.
 	No ternary operator.
@@ -18,7 +18,7 @@ Coding Conventions
 	Declare variables at the top of the scope they are in.
 	Descriptive variable names.
 	Javadocs are required for public functions.
-	Have helper functions be in order of appearance after the public it’s in
+	Have helper functions be in order of appearance after the public it’s in.
 	Always have a clean compile.
 	Spaces after controls statements and condition parentheses.
 		Example
