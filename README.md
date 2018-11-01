@@ -22,6 +22,7 @@ Compilation Conventions (assumes Unix system):
 
 
 Coding Conventions:
+
 	Tab, so the spacing can set to whatever the individual wants.
 	Try to keep functions ~25 lines max.
 	Some level of avoiding nesting.
@@ -43,5 +44,6 @@ Coding Conventions:
 
 
 Git Conventions:
+
 	Small, frequent commits.
 
