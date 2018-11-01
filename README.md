@@ -3,24 +3,20 @@ This project is used to provide data processing portions of the ChocAn system (a
     Design Doc:         https://docs.google.com/document/d/1i6cvvDyHuR04P4A1nUWZgMZvVRzFk_xQmMkc9EyHeaI/edit?usp=sharing
 
 
-Compilation Conventions (assumes Unix system)
+Compilation Conventions (assumes Unix system):
 	The system should be able to be compiled with the below line without any errors or warnings
 		javac *.java
-
 	The system should be runnable with the below line without any errors or warnings.
 		java ChocAnSystem
-
 	The system should be able to be be jar-ed with the below line without any errors or warnings.
 		jar -cfe ChocAnSystem.jar ChocAnSystem *.class *.java
-
 	The system should be runnable with ChocAnSystem.jar, member_directory, and provider_directory in the same directory with the line below.
 		java -jar ChocAnSystem.jar
-
 	The system's javadocs should be generated with the below line without any errors or warnings.
 		javadoc -d chocAnJavadocs *.java
 
 
-Coding Conventions
+Coding Conventions:
 	Tab, so the spacing can set to whatever the individual wants.
 	Try to keep functions ~25 lines max.
 	Some level of avoiding nesting.
@@ -41,6 +37,6 @@ Coding Conventions
 		}
 
 
-Git Conventions
+Git Conventions:
 	Small, frequent commits.
 
