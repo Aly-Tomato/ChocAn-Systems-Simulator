@@ -1,7 +1,6 @@
-
 This project is used to provide data processing portions of the ChocAn system (a fictional system for CS300).
-	Requirements Doc:   https://docs.google.com/document/d/1o3gu3sPVz-Qbbxp4Pi2eDYI_ijRIRFU5tgz03PTzfm0/edit?usp=sharing
-	Design Doc:         https://docs.google.com/document/d/1i6cvvDyHuR04P4A1nUWZgMZvVRzFk_xQmMkc9EyHeaI/edit?usp=sharing
+    Requirements Doc:   https://docs.google.com/document/d/1o3gu3sPVz-Qbbxp4Pi2eDYI_ijRIRFU5tgz03PTzfm0/edit?usp=sharing
+    Design Doc:         https://docs.google.com/document/d/1i6cvvDyHuR04P4A1nUWZgMZvVRzFk_xQmMkc9EyHeaI/edit?usp=sharing
 
 
 Compilation Conventions (assumes Unix system)
