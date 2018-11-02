@@ -36,13 +36,13 @@ public class ChocAnSystem {
 					inputScanner.close();
 					return;
 				case 1:
-					runSubsystem1();
+					runSubsystem1(inputScanner);
 					break;
 				case 2:
-					runSubsystem2();
+					runSubsystem2(inputScanner);
 					break;
 				case 3:
-					runSubsystem3();
+					runSubsystem3(inputScanner);
 					break;
 				default:
 					System.out.println("The input of [" + subsystemToEnter + "] is not valid; try again.");
@@ -51,17 +51,17 @@ public class ChocAnSystem {
 		}
 	}
 
-	private static void runSubsystem1() {
+	private static void runSubsystem1(Scanner inputScanner) {
 		System.out.println("Loading: Providing and Billing a Member for a Service");
 		// TODO: put the caller code here
 	}
 
-	private static void runSubsystem2() {
+	private static void runSubsystem2(Scanner inputScanner) {
 		System.out.println("Loading: Report Generator");
 		// TODO: put the caller code here
 	}
 
-	private static void runSubsystem3() {
+	private static void runSubsystem3(Scanner inputScanner) {
 		System.out.println("Loading: Operator Mode");
 		// TODO: put the caller code here
 	}
