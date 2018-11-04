@@ -2,6 +2,8 @@ import java.util.Scanner;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import org.json.simple.JSONObject;
+
 /**
  * ChocAnSystem is a wrapper that allows ChocAn to access the different systems
  * built by Group Five to verify that each subsystem is correct.

@@ -5,18 +5,16 @@ This project is used to provide data processing portions of the ChocAn system (a
 
 Compilation Conventions (assumes Unix system):
 
-	The system should be able to be compiled with the below line without any errors or warnings
-		javac *.java
-		
+	The system should be able to be compiled with the below line without any errors or warnings.
+		javac -cp .:./externalJars/json-simple-1.1.1.jar *.java
+
+	Note: there are two warnings caused by using any of json.simple's classes and are unavoidable.
+		Note: ChocAnSystem.java uses unchecked or unsafe operations.
+		Note: Recompile with -Xlint:unchecked for details.
+
 	The system should be runnable with the below line without any errors or warnings.
-		java ChocAnSystem
-		
-	The system should be able to be be jar-ed with the below line without any errors or warnings.
-		jar -cfe ChocAnSystem.jar ChocAnSystem *.class *.java
-		
-	The system should be runnable with ChocAnSystem.jar, member_directory, and provider_directory in the same directory with the line below.
-		java -jar ChocAnSystem.jar
-		
+		java -cp .:./externalJars/json-simple-1.1.1.jar ChocAnSystem
+
 	The system's javadocs should be generated with the below line without any errors or warnings.
 		javadoc -d chocAnJavadocs *.java
 
