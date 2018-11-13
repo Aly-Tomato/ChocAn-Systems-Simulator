@@ -1,8 +1,11 @@
 import java.util.Scanner;
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 
 /**
  * ChocAnSystem is a wrapper that allows ChocAn to access the different systems
@@ -16,6 +19,8 @@ public class ChocAnSystem {
 	public static void main(String[] args) {
 		Scanner inputScanner = new Scanner(System.in);
 		int subsystemToEnter;
+		String memberFileLocation = "./directories/member_directory";
+		String providerFileLocation = "./directories/provider_directory";
 
 		System.out.println();
 		System.out.println("Welcome to ChocAn's Data Processing System.");
@@ -25,6 +30,9 @@ public class ChocAnSystem {
 		System.out.println("\t1) Providing and Billing a Member for a Service");
 		System.out.println("\t2) Report Generator");
 		System.out.println("\t3) Operator Mode");
+		System.out.println();
+		System.out.println("\t4) Other: Fill Member Directory with Data");
+		System.out.println("\t5) Other: Fill Provider Directory with Data");
 
 		while(true) {
 			System.out.println();
@@ -46,6 +54,12 @@ public class ChocAnSystem {
 				case 3:
 					runSubsystem3(inputScanner);
 					break;
+				case 4:
+					fillMemberDirectory(memberFileLocation);
+					break;
+				case 5:
+					fillProviderDirectory(providerFileLocation);
+					break;
 				default:
 					System.out.println("The input of [" + subsystemToEnter + "] is not valid; try again.");
 					break;
@@ -66,6 +80,41 @@ public class ChocAnSystem {
 	private static void runSubsystem3(Scanner inputScanner) {
 		System.out.println("Loading: Operator Mode");
 		// TODO: put the caller code here
+	}
+
+	private static void fillMemberDirectory(String memberFileLocation) {
+		JSONObject member_directory = new JSONObject();
+
+		System.out.println("Loading: fill member directory");
+		member_directory.put("000000001", "Valid");
+		member_directory.put("000000002", "Suspended");
+		member_directory.put("000000004", "Suspended");
+		member_directory.put("000000005", "Valid");
+		member_directory.put("000000010", "Suspended");
+		member_directory.put("000000015", "Suspended");
+		member_directory.put("000000020", "Valid");
+		member_directory.put("039390041", "Valid");
+
+		try {
+			System.out.println("Writing to member_directory at: " + memberFileLocation);
+			File memberFile = new File(memberFileLocation);
+			if (!memberFile.exists())
+				memberFile.createNewFile();
+			BufferedWriter memberFileWriter = new BufferedWriter(new FileWriter(memberFile));
+
+			memberFileWriter.write(JSONValue.toJSONString(member_directory));
+			memberFileWriter.close();
+			System.out.println("Wrote the below to " + memberFileLocation + ":\n" + member_directory);
+
+		} catch (IOException error) {
+			error.printStackTrace();
+		}
+	}
+
+	private static void fillProviderDirectory(String providerFileLocation) {
+		System.out.println("Loading: fill provider directory");
+		// TODO: this
+		System.out.println();
 	}
 }
 
