@@ -10,6 +10,9 @@ import org.json.simple.JSONValue;
 /**
  * ChocAnSystem is a wrapper that allows ChocAn to access the different systems
  * built by Group Five to verify that each subsystem is correct.
+ * The below are good reference tutorials for json-simple:
+ * https://www.mkyong.com/java/json-simple-example-read-and-write-json/
+ * https://howtodoinjava.com/json/json-simple-read-write-json-examples/
  * 
  * @author  Group Five
  * @version 1.0
@@ -83,9 +86,17 @@ public class ChocAnSystem {
 	}
 
 	private static void fillMemberDirectory(String memberFileLocation) {
+		System.out.println("Loading: fill member directory");
+		/* General Json Structure for member_directory
+		 * where status is either "Valid" or "Suspended"
+		 * {
+		 * 	memberNumber (9 digits; string): status,
+		 * 	memberNumber (9 digits; string): status,
+		 * 	memberNumber (9 digits; string): status
+		 * }
+		 */
 		JSONObject member_directory = new JSONObject();
 
-		System.out.println("Loading: fill member directory");
 		member_directory.put("000000001", "Valid");
 		member_directory.put("000000002", "Suspended");
 		member_directory.put("000000004", "Suspended");
@@ -95,6 +106,7 @@ public class ChocAnSystem {
 		member_directory.put("000000020", "Valid");
 		member_directory.put("039390041", "Valid");
 
+		// Note that this try/catch is the same as fillProviderDirectory()'s'
 		try {
 			System.out.println("Writing to member_directory at: " + memberFileLocation);
 			File memberFile = new File(memberFileLocation);
@@ -113,8 +125,71 @@ public class ChocAnSystem {
 
 	private static void fillProviderDirectory(String providerFileLocation) {
 		System.out.println("Loading: fill provider directory");
-		// TODO: this
-		System.out.println();
+		/* General Json Structure for provider_directory
+		 * {
+		 * 	providerNumber (9 digits; string): {
+		 * 		name: provider's name (25 chars),
+		 * 		serviceNumbers: {
+		 * 			serviceNumber (6 digits; string): {
+		 * 				name: service name (20 chars),
+		 * 				fee: service fee (up to $99,999; double)
+		 * 			},
+		 * 			serviceNumber (6 digits; string): {
+		 * 				name: service name (20 chars),
+		 * 				fee: service fee (up to $99,999; double)
+		 * 			}
+		 * 		}
+		 * 	},
+		 * 	providerNumber (9 digits; string): {
+		 * 		name: provider's name (25 chars),
+		 * 		serviceNumbers: {
+		 * 			serviceNumber (6 digits; string): {
+		 * 				name: service name (20 chars),
+		 * 				fee: service fee (up to $99,999.99; double)
+		 * 			},
+		 * 			serviceNumber (6 digits; string): {
+		 * 				name: service name (20 chars),
+		 * 				fee: service fee (up to $99,999.99; double)
+		 * 			}
+		 * 		}
+		 * 	}
+		 * }
+		 */
+		JSONObject provider_directory = new JSONObject();
+		JSONObject providerNumber = new JSONObject();
+		JSONObject serviceNumbers = new JSONObject();
+		JSONObject serviceInfo1 = new JSONObject();
+		JSONObject serviceInfo2 = new JSONObject();
+
+		serviceInfo1.put("name", "Back Rub");
+		serviceInfo1.put("fee", new Double(25.00));
+		serviceNumbers.put("000000", serviceInfo1);
+
+		serviceInfo2.put("name", "Therapy");
+		serviceInfo2.put("fee", new Double(79.99));
+		serviceNumbers.put("005020", serviceInfo2);
+
+		providerNumber.put("name", "Kaiser");
+		providerNumber.put("serviceNumbers", serviceNumbers);
+
+		provider_directory.put("014358673", providerNumber);
+
+
+		// Note that this try/catch is the same as fillMemberDirectory()'s'
+		try {
+			System.out.println("Writing to provider_directory at: " + providerFileLocation);
+			File providerFile = new File(providerFileLocation);
+			if (!providerFile.exists())
+				providerFile.createNewFile();
+			BufferedWriter providerFileWriter = new BufferedWriter(new FileWriter(providerFile));
+
+			providerFileWriter.write(JSONValue.toJSONString(provider_directory));
+			providerFileWriter.close();
+			System.out.println("Wrote the below to " + providerFileLocation + ":\n" + provider_directory);
+
+		} catch (IOException error) {
+			error.printStackTrace();
+		}
 	}
 }
 
