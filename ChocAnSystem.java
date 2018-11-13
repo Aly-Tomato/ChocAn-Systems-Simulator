@@ -87,6 +87,14 @@ public class ChocAnSystem {
 
 	private static void fillMemberDirectory(String memberFileLocation) {
 		System.out.println("Loading: fill member directory");
+		/* General Json Structure for member_directory
+		 * where status is either "Valid" or "Suspended"
+		 * {
+		 * 	memberNumber (9 digits; string): status,
+		 * 	memberNumber (9 digits; string): status,
+		 * 	memberNumber (9 digits; string): status
+		 * }
+		 */
 		JSONObject member_directory = new JSONObject();
 
 		member_directory.put("000000001", "Valid");
@@ -117,6 +125,36 @@ public class ChocAnSystem {
 
 	private static void fillProviderDirectory(String providerFileLocation) {
 		System.out.println("Loading: fill provider directory");
+		/* General Json Structure for provider_directory
+		 * {
+		 * 	providerNumber (9 digits; string): {
+		 * 		name: provider's name (25 chars),
+		 * 		serviceNumbers: {
+		 * 			serviceNumber (6 digits; string): {
+		 * 				name: service name (20 chars),
+		 * 				fee: service fee (up to $99,999; double)
+		 * 			},
+		 * 			serviceNumber (6 digits; string): {
+		 * 				name: service name (20 chars),
+		 * 				fee: service fee (up to $99,999; double)
+		 * 			}
+		 * 		}
+		 * 	},
+		 * 	providerNumber (9 digits; string): {
+		 * 		name: provider's name (25 chars),
+		 * 		serviceNumbers: {
+		 * 			serviceNumber (6 digits; string): {
+		 * 				name: service name (20 chars),
+		 * 				fee: service fee (up to $99,999.99; double)
+		 * 			},
+		 * 			serviceNumber (6 digits; string): {
+		 * 				name: service name (20 chars),
+		 * 				fee: service fee (up to $99,999.99; double)
+		 * 			}
+		 * 		}
+		 * 	}
+		 * }
+		 */
 		JSONObject provider_directory = new JSONObject();
 		JSONObject providerNumber = new JSONObject();
 		JSONObject serviceNumbers = new JSONObject();
