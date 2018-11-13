@@ -45,3 +45,8 @@ Git Conventions:
 
 	Small, frequent commits.
 
+
+JSON Stuctures
+
+	See ChocAnSystem.java for these, in fillMemberDirectory() and fillProviderDirectory()
+
