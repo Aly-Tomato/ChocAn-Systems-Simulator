@@ -14,7 +14,7 @@ import org.json.simple.JSONValue;
  * https://www.mkyong.com/java/json-simple-example-read-and-write-json/
  * https://howtodoinjava.com/json/json-simple-read-write-json-examples/
  * 
- * @author  Group Five
+ * @author  Group Five: [TODO everyone add your name here] Sawyer Watts, Medina Lamkin
  * @version 1.0
  * @since   2018-11-01 
  */
@@ -133,75 +133,85 @@ public class ChocAnSystem {
 		/* General Json Structure for member_directory
 		 * where status is either "Valid" or "Suspended"
 		 * {
-		 * 	memberNumber (9 digits; string): {
-		 * 		name: member's name (25 characters; string),
-		 * 		street: member's street (25 characters; string),
-		 * 		city: member's city (14 characters; string),
-		 * 		state: member's state (2 characters; string),
-		 * 		zipCode: member's zip code (5 characters; string),
-		 * 		status: member's status (see above)
+		 * 	"memberNumber" (9 digits; string): {
+		 * 		"name": member's name (25 characters; string),
+		 * 		"street": member's street (25 characters; string),
+		 * 		"city": member's city (14 characters; string),
+		 * 		"state": member's state (2 characters; string),
+		 * 		"zipCode": member's zip code (5 characters; string),
+		 * 		"status": member's status (see above)
 		 * 	},
-		 * 	memberNumber (9 digits; string): {
-		 * 		name: member's name (25 characters; string),
-		 * 		street: member's street (25 characters; string),
-		 * 		city: member's city (14 characters; string),
-		 * 		state: member's state (2 characters; string),
-		 * 		zipCode: member's zip code (5 characters; string),
-		 * 		status: member's status (see above)
+		 * 	"memberNumber" (9 digits; string): {
+		 * 		"name": member's name (25 characters; string),
+		 * 		"street": member's street (25 characters; string),
+		 * 		"city": member's city (14 characters; string),
+		 * 		"state": member's state (2 characters; string),
+		 * 		"zipCode": member's zip code (5 characters; string),
+		 * 		"status": member's status (see above)
 		 * 	}
 		 * }
 		 */
 		JSONObject member_directory = new JSONObject();
-		member_directory.put("000000001", "Valid");
-		member_directory.put("000000002", "Suspended");
-		member_directory.put("000000004", "Suspended");
-		member_directory.put("000000005", "Valid");
-		member_directory.put("000000010", "Suspended");
-		member_directory.put("000000015", "Suspended");
-		member_directory.put("000000020", "Valid");
-		member_directory.put("039390041", "Valid");
+		JSONObject memberInfo1 = new JSONObject();
+		memberInfo1.put("name", "Kaiser");
+		memberInfo1.put("street", "105 McMin St");
+		memberInfo1.put("city", "Oregon City");
+		memberInfo1.put("state", "OR");
+		memberInfo1.put("zipCode", "97045");
+		memberInfo1.put("status", "Valid");
+
+		JSONObject memberInfo2 = new JSONObject();
+		memberInfo2.put("name", "Providence");
+		memberInfo2.put("street", "205 Apple Ln");
+		memberInfo2.put("city", "West Linn");
+		memberInfo2.put("state", "OR");
+		memberInfo2.put("zipCode", "44444");
+		memberInfo2.put("status", "Suspended");
+
+		member_directory.put("019283845", memberInfo1);
+		member_directory.put("993392546", memberInfo2);
 
 		if (writeToFile(memberFileLocation, member_directory))
-			System.out.println("Successfully rewrote member_directory");
+			System.out.println("Successfully rewrote member_directory\n");
 		else
-			System.out.println("FAIL: did not rewrite member_directory");
+			System.out.println("FAIL: did not rewrite member_directory\n");
 	}
 
 	private static void fillProviderDirectory(String providerFileLocation) {
 		System.out.println("Loading: fill provider directory");
 		/* General Json Structure for provider_directory
 		 * {
-		 * 	providerNumber (9 digits; string): {
-		 * 		name: provider's name (25 chars),
-		 * 		street: provider's street (25 characters; string),
-		 * 		city: provider's city (14 characters; string),
-		 * 		state: provider's state (2 characters; string),
-		 * 		zipCode: provider's zip code (5 characters; string),
-		 * 		serviceNumbers: {
-		 * 			serviceNumber (6 digits; string): {
-		 * 				name: service name (20 chars),
-		 * 				fee: service fee (up to $99,999; double)
+		 * 	"providerNumber" (9 digits; string): {
+		 * 		"name": provider's name (25 chars),
+		 * 		"street": provider's street (25 characters; string),
+		 * 		"city": provider's city (14 characters; string),
+		 * 		"state": provider's state (2 characters; string),
+		 * 		"zipCode": provider's zip code (5 characters; string),
+		 * 		"serviceNumbers": {
+		 * 			"serviceNumber" (6 digits; string): {
+		 * 				"name": service name (20 chars),
+		 * 				"fee": service fee (up to $99,999; double)
 		 * 			},
-		 * 			serviceNumber (6 digits; string): {
-		 * 				name: service name (20 chars),
-		 * 				fee: service fee (up to $99,999; double)
+		 * 			"serviceNumber" (6 digits; string): {
+		 * 				"name": service name (20 chars),
+		 * 				"fee": service fee (up to $99,999; double)
 		 * 			}
 		 * 		}
 		 * 	},
-		 * 	providerNumber (9 digits; string): {
-		 * 		name: provider's name (25 chars),
-		 * 		street: provider's street (25 characters; string),
-		 * 		city: provider's city (14 characters; string),
-		 * 		state: provider's state (2 characters; string),
-		 * 		zipCode: provider's zip code (5 characters; string),
-		 * 		serviceNumbers: {
-		 * 			serviceNumber (6 digits; string): {
-		 * 				name: service name (20 chars),
-		 * 				fee: service fee (up to $99,999.99; double)
+		 * 	"providerNumber" (9 digits; string): {
+		 * 		"name": provider's name (25 chars),
+		 * 		"street": provider's street (25 characters; string),
+		 * 		"city": provider's city (14 characters; string),
+		 * 		"state": provider's state (2 characters; string),
+		 * 		"zipCode": provider's zip code (5 characters; string),
+		 * 		"serviceNumbers": {
+		 * 			"serviceNumber" (6 digits; string): {
+		 * 				"name": service name (20 chars),
+		 * 				"fee": service fee (up to $99,999; double)
 		 * 			},
-		 * 			serviceNumber (6 digits; string): {
-		 * 				name: service name (20 chars),
-		 * 				fee: service fee (up to $99,999.99; double)
+		 * 			"serviceNumber" (6 digits; string): {
+		 * 				"name": service name (20 chars),
+		 * 				"fee": service fee (up to $99,999; double)
 		 * 			}
 		 * 		}
 		 * 	}
@@ -221,14 +231,18 @@ public class ChocAnSystem {
 		serviceInfo2.put("fee", new Double(79.99));
 		serviceNumbers.put("005020", serviceInfo2);
 
-		providerNumber.put("name", "Kaiser");
 		providerNumber.put("serviceNumbers", serviceNumbers);
+		providerNumber.put("name", "Kaiser");
+		providerNumber.put("street", "105 McMin St");
+		providerNumber.put("city", "Oregon City");
+		providerNumber.put("state", "OR");
+		providerNumber.put("zipCode", "97045");
 
 		provider_directory.put("014358673", providerNumber);
 		if (writeToFile(providerFileLocation, provider_directory))
-			System.out.println("Successfully rewrote provider_directory");
+			System.out.println("Successfully rewrote provider_directory\n");
 		else
-			System.out.println("FAIL: did not rewrite provider_directory");
+			System.out.println("FAIL: did not rewrite provider_directory\n");
 	}
 
 	private static boolean writeToFile(String fileLocation, JSONObject newDirectory) {
