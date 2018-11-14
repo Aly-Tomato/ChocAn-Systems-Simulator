@@ -20,24 +20,23 @@ import org.json.simple.JSONValue;
  */
 public class ChocAnSystem {
 	public static void main(String[] args) {
+		System.out.println();
+		System.out.println("Welcome to ChocAn's Data Processing System.");
+		System.out.println();
 		Scanner inputScanner = new Scanner(System.in);
 		int subsystemToEnter;
 		String memberFileLocation = "./directories/member_directory";
 		String providerFileLocation = "./directories/provider_directory";
 
-		System.out.println();
-		System.out.println("Welcome to ChocAn's Data Processing System.");
-		System.out.println("What subsystem would you like to use? (Please enter the arabic subsystem number)");
-		System.out.println();
-		System.out.println("\t0) Terminate this program");
-		System.out.println("\t1) Providing and Billing a Member for a Service");
-		System.out.println("\t2) Report Generator");
-		System.out.println("\t3) Operator Mode");
-		System.out.println();
-		System.out.println("\t4) Other: Fill Member Directory with Data");
-		System.out.println("\t5) Other: Fill Provider Directory with Data");
-
 		while(true) {
+			System.out.println("What subsystem would you like to use? (Please enter the arabic subsystem number)");
+			System.out.println("\t0) Terminate this program");
+			System.out.println("\t1) Providing and Billing a Member for a Service");
+			System.out.println("\t2) Report Generator");
+			System.out.println("\t3) Operator Mode");
+			System.out.println();
+			System.out.println("\t4) Other: Fill Member Directory with Data");
+			System.out.println("\t5) Other: Fill Provider Directory with Data");
 			System.out.println();
 			System.out.print("> ");
 			subsystemToEnter = inputScanner.nextInt();
@@ -82,7 +81,51 @@ public class ChocAnSystem {
 
 	private static void runSubsystem3(Scanner inputScanner) {
 		System.out.println("Loading: Operator Mode");
-		// TODO: put the caller code here
+		int routineToRun;
+		Operator theOperator = new Operator();
+
+		while(true) {
+			System.out.println("What routine would you like to use? (Please enter the arabic routine number)");
+			System.out.println();
+			System.out.println("\t0) Terminate this subsystem");
+			System.out.println("\t1) Add a Member");
+			System.out.println("\t2) Edit a Member");
+			System.out.println("\t3) Delete a Member");
+			System.out.println("\t4) Add a Provider");
+			System.out.println("\t5) Edit a Provider");
+			System.out.println("\t6) Delete a Provider");
+			System.out.println();
+			System.out.print("> ");
+			routineToRun = inputScanner.nextInt();
+
+			switch(routineToRun) {
+				case 0:
+					System.out.println("Closing: Operator Mode");
+					System.out.println();
+					return;
+				case 1:
+					// TODO: add a member functionality
+					break;
+				case 2:
+					// TODO: edit a member funcitonality
+					break;
+				case 3:
+					// TODO: delete a member funcitonality
+					break;
+				case 4:
+					theOperator.addProvider(inputScanner);
+					break;
+				case 5:
+					// TODO: edit a provider funcitonality
+					break;
+				case 6:
+					// TODO: delete a provider funcitonality
+					break;
+				default:
+					System.out.println("The input of [" + routineToRun + "] is not valid; try again.");
+					break;
+			}
+		}
 	}
 
 	private static void fillMemberDirectory(String memberFileLocation) {
@@ -90,9 +133,22 @@ public class ChocAnSystem {
 		/* General Json Structure for member_directory
 		 * where status is either "Valid" or "Suspended"
 		 * {
-		 * 	memberNumber (9 digits; string): status,
-		 * 	memberNumber (9 digits; string): status,
-		 * 	memberNumber (9 digits; string): status
+		 * 	memberNumber (9 digits; string): {
+		 * 		name: member's name (25 characters; string),
+		 * 		street: member's street (25 characters; string),
+		 * 		city: member's city (14 characters; string),
+		 * 		state: member's state (2 characters; string),
+		 * 		zipCode: member's zip code (5 characters; string),
+		 * 		status: member's status (see above)
+		 * 	},
+		 * 	memberNumber (9 digits; string): {
+		 * 		name: member's name (25 characters; string),
+		 * 		street: member's street (25 characters; string),
+		 * 		city: member's city (14 characters; string),
+		 * 		state: member's state (2 characters; string),
+		 * 		zipCode: member's zip code (5 characters; string),
+		 * 		status: member's status (see above)
+		 * 	}
 		 * }
 		 */
 		JSONObject member_directory = new JSONObject();
@@ -117,6 +173,10 @@ public class ChocAnSystem {
 		 * {
 		 * 	providerNumber (9 digits; string): {
 		 * 		name: provider's name (25 chars),
+		 * 		street: provider's street (25 characters; string),
+		 * 		city: provider's city (14 characters; string),
+		 * 		state: provider's state (2 characters; string),
+		 * 		zipCode: provider's zip code (2 characters; string),
 		 * 		serviceNumbers: {
 		 * 			serviceNumber (6 digits; string): {
 		 * 				name: service name (20 chars),
@@ -130,6 +190,10 @@ public class ChocAnSystem {
 		 * 	},
 		 * 	providerNumber (9 digits; string): {
 		 * 		name: provider's name (25 chars),
+		 * 		street: provider's street (25 characters; string),
+		 * 		city: provider's city (14 characters; string),
+		 * 		state: provider's state (2 characters; string),
+		 * 		zipCode: provider's zip code (2 characters; string),
 		 * 		serviceNumbers: {
 		 * 			serviceNumber (6 digits; string): {
 		 * 				name: service name (20 chars),
