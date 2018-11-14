@@ -176,7 +176,7 @@ public class ChocAnSystem {
 		 * 		street: provider's street (25 characters; string),
 		 * 		city: provider's city (14 characters; string),
 		 * 		state: provider's state (2 characters; string),
-		 * 		zipCode: provider's zip code (2 characters; string),
+		 * 		zipCode: provider's zip code (5 characters; string),
 		 * 		serviceNumbers: {
 		 * 			serviceNumber (6 digits; string): {
 		 * 				name: service name (20 chars),
@@ -193,7 +193,7 @@ public class ChocAnSystem {
 		 * 		street: provider's street (25 characters; string),
 		 * 		city: provider's city (14 characters; string),
 		 * 		state: provider's state (2 characters; string),
-		 * 		zipCode: provider's zip code (2 characters; string),
+		 * 		zipCode: provider's zip code (5 characters; string),
 		 * 		serviceNumbers: {
 		 * 			serviceNumber (6 digits; string): {
 		 * 				name: service name (20 chars),
