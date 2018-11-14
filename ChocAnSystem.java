@@ -96,7 +96,6 @@ public class ChocAnSystem {
 		 * }
 		 */
 		JSONObject member_directory = new JSONObject();
-
 		member_directory.put("000000001", "Valid");
 		member_directory.put("000000002", "Suspended");
 		member_directory.put("000000004", "Suspended");
@@ -106,21 +105,10 @@ public class ChocAnSystem {
 		member_directory.put("000000020", "Valid");
 		member_directory.put("039390041", "Valid");
 
-		// Note that this try/catch is the same as fillProviderDirectory()'s'
-		try {
-			System.out.println("Writing to member_directory at: " + memberFileLocation);
-			File memberFile = new File(memberFileLocation);
-			if (!memberFile.exists())
-				memberFile.createNewFile();
-			BufferedWriter memberFileWriter = new BufferedWriter(new FileWriter(memberFile));
-
-			memberFileWriter.write(JSONValue.toJSONString(member_directory));
-			memberFileWriter.close();
-			System.out.println("Wrote the below to " + memberFileLocation + ":\n" + member_directory);
-
-		} catch (IOException error) {
-			error.printStackTrace();
-		}
+		if (writeToFile(memberFileLocation, member_directory))
+			System.out.println("Successfully rewrote member_directory");
+		else
+			System.out.println("FAIL: did not rewrite member_directory");
 	}
 
 	private static void fillProviderDirectory(String providerFileLocation) {
@@ -173,23 +161,28 @@ public class ChocAnSystem {
 		providerNumber.put("serviceNumbers", serviceNumbers);
 
 		provider_directory.put("014358673", providerNumber);
+		if (writeToFile(providerFileLocation, provider_directory))
+			System.out.println("Successfully rewrote provider_directory");
+		else
+			System.out.println("FAIL: did not rewrite provider_directory");
+	}
 
-
-		// Note that this try/catch is the same as fillMemberDirectory()'s'
+	private static boolean writeToFile(String fileLocation, JSONObject newDirectory) {
 		try {
-			System.out.println("Writing to provider_directory at: " + providerFileLocation);
-			File providerFile = new File(providerFileLocation);
-			if (!providerFile.exists())
-				providerFile.createNewFile();
-			BufferedWriter providerFileWriter = new BufferedWriter(new FileWriter(providerFile));
+			File outputFile = new File(fileLocation);
+			if (!outputFile.exists())
+				outputFile.createNewFile();
+			BufferedWriter outputFileWriter = new BufferedWriter(new FileWriter(outputFile));
 
-			providerFileWriter.write(JSONValue.toJSONString(provider_directory));
-			providerFileWriter.close();
-			System.out.println("Wrote the below to " + providerFileLocation + ":\n" + provider_directory);
+			outputFileWriter.write(JSONValue.toJSONString(newDirectory));
+			outputFileWriter.close();
 
 		} catch (IOException error) {
 			error.printStackTrace();
+			return false;
 		}
+
+		return true;
 	}
 }
 
