@@ -40,6 +40,7 @@ public class ChocAnSystem {
 			System.out.println();
 			System.out.print("> ");
 			subsystemToEnter = inputScanner.nextInt();
+			inputScanner.nextLine();
 
 			switch(subsystemToEnter) {
 				case 0:
@@ -97,6 +98,7 @@ public class ChocAnSystem {
 			System.out.println();
 			System.out.print("> ");
 			routineToRun = inputScanner.nextInt();
+			inputScanner.nextLine();
 
 			switch(routineToRun) {
 				case 0:
