@@ -28,24 +28,8 @@ public class memberServices{
   //protected ChocAnSystem CAS = new ChocAnSystem();
   protected OperatorMode OM = new OperatorMode();
   protected JSONParser parser = new JSONParser();
-  protected JSONObject serviceReport = new JSONObject();
+  //protected JSONObject serviceReport = new JSONObject();
 
-
-  /*
-   *Move these into user class
-
-  public String getString(){
-    String returnThis = new String();
-    returnThis = CAS.inputScanner.nextLine();
-    return returnThis;
-  }
-
-  public int getInt(){
-    int return_this;
-    return_this = CAS.inputScanner.nextInt();
-    return return_this;
-  }
-  */
 
   protected boolean isValid(int number, String memberFileLocation){
     //check if member number is appropriate length
@@ -55,20 +39,19 @@ public class memberServices{
 
     //Parse file to find member number
     try{
-    Object obj = parser.parse(new FileReader(memberFileLocation));
+      Object obj = parser.parse(new FileReader(memberFileLocation));
+      JSONObject jsonObject = (JSONObject) obj;
 
+      member = (int)jsonObject.get("memberNumber");
+      if(member == number) return true;
     }
     catch(IOException e){
-      System.out.println("IO Exception");
       e.printStackTrace();
     }
     catch(ParseException e){
-      System.out.println("Parse Exception");
       e.printStackTrace();
     }
 
-    member = (int) serviceReport.get("memberNumber");
-    if(member == number) return true;
     
     return false;
 

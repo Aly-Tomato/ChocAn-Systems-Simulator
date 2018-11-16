@@ -22,7 +22,8 @@ public class Subsystem1Main {
         System.out.println("ID Number: ");
         int ProviderID = getInt(inputScanner);
 
-        String memberFileLocation = "./directories/member_directory";
+        String memberFileLocation = new String();
+        memberFileLocation = "./directories/member_directory";
         if(obj.isValid(ProviderID, memberFileLocation)) {
             System.out.println("TRUE");
             return;
