@@ -72,6 +72,8 @@ public class ChocAnSystem {
 
 	private static void runSubsystem1(Scanner inputScanner) {
 		System.out.println("Loading: Providing and Billing a Member for a Service");
+		Subsystem1Main sub1 = new Subsystem1Main();
+		sub1.main(inputScanner);
 		// TODO: put the caller code here
 	}
 
@@ -83,7 +85,7 @@ public class ChocAnSystem {
 	private static void runSubsystem3(Scanner inputScanner) {
 		System.out.println("Loading: Operator Mode");
 		int routineToRun;
-		Operator theOperator = new Operator();
+		OperatorMode theOperator = new OperatorMode();
 
 		while(true) {
 			System.out.println("What routine would you like to use? (Please enter the arabic routine number)");
@@ -115,7 +117,7 @@ public class ChocAnSystem {
 					// TODO: delete a member funcitonality
 					break;
 				case 4:
-					theOperator.addProvider(inputScanner);
+					//theOperator.addProvider(inputScanner);
 					break;
 				case 5:
 					// TODO: edit a provider funcitonality

@@ -4,25 +4,12 @@
 
 
 public class memberServices{
-  
   //data fields
   protected int provider; //9-digit provider# 
   protected int member;  // 9-digit provider#
   protected String comments;
   protected int size = 20;
   protected int [] memDirectory = new int[size];
-
-  public String getString(){
-    String returnThis = new String();
-    returnThis = inputScanner.nextLine();
-    return returnThis;
-  }
-
-  public int getInt(){
-    int return_this;
-    return_this = inputScanner.nextInt();
-    return return_this;
-  }
 
   protected boolean isValid(int number){
     //check if member number is appropriate length
