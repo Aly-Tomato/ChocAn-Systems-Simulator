@@ -185,26 +185,14 @@ public class Operator {
 		JSONParser jsonParser = new JSONParser();
 		JSONObject providersJson = (JSONObject) jsonParser.parse(reader);
 
+		// generate provider number
 		while (true) {
 			providerNumber = generateRandomNumber(stakeholderNumberSetLength);
 			if (!providersJson.containsKey(providerNumber))
 				break;
 		}
 
-		// get name
-		System.out.println("Please enter the new provider's name (" + stakeholderNameMaxLength + " characters max): ");
-		while (true) {
-			System.out.print("> ");
-			name = systemInputScanner.nextLine();
-			if (name.length() == 0)
-				;
-			else if (name.length() > stakeholderNameMaxLength)
-				System.out.println("That data was too long to be stored.");
-			else if (validateString(name))
-				break;
-			else
-				System.out.println("Please do not enter anything besides characters and spaces.");
-		}
+		name = promptForString(systemInputScanner, "name", stakeholderNameMaxLength);
 		System.out.println();
 
 		// get street
@@ -245,20 +233,7 @@ public class Operator {
 		}
 		System.out.println();
 
-		// get city
-		System.out.println("Please enter the new provider's city (" + cityMaxLength + " characters max): ");
-		while (true) {
-			System.out.print("> ");
-			city = systemInputScanner.nextLine();
-			if (city.length() == 0)
-				;
-			else if (city.length() > cityMaxLength)
-				System.out.println("That data was too long to be stored.");
-			else if (validateString(city))
-				break;
-			else
-				System.out.println("Please do not enter anything besides characters and spaces.");
-		}
+		city = promptForString(systemInputScanner, "city", cityMaxLength);
 		System.out.println();
 
 		// get state
@@ -305,22 +280,11 @@ public class Operator {
 				}
 			}
 
-			System.out.println("Please enter a service name (" + serviceNameMaxLength + " characters max): ");
-			while (true) {
-				System.out.print("> ");
-				serviceName = systemInputScanner.nextLine();
-				if (serviceName.length() == 0)
-					;
-				else if (serviceName.length() > serviceNameMaxLength)
-					System.out.println("That data was too long to be stored.");
-				else if (validateString(serviceName)) {
-					serviceNames.add(serviceName);
-					break;
-				} else
-					System.out.println("Please do not enter anything besides characters and spaces.");
-			}
+			// get a new service name to add
+			serviceNames.add(promptForString(systemInputScanner, "service name", serviceNameMaxLength));
 			System.out.println();
 
+			// get a new service fee to associate with the name
 			System.out.println("Please enter that service's fee (up to $" + serviceMaxPrice + "; do not include punctuation besides a \".\"): ");
 			while (true) {
 				System.out.print("> ");
@@ -342,6 +306,7 @@ public class Operator {
 			}
 			System.out.println();
 
+			// TODO: functionize this
 			System.out.println("Would you like to enter another service? (Y/n): ");
 			while (true) {
 				System.out.print("> ");
@@ -397,6 +362,28 @@ public class Operator {
 		for (int i = 0; i < digits; i++)
 			randomNumber += (int) (Math.random() * 10);
 		return randomNumber;
+	}
+
+	// promptForString is a helper function that will prompt the user for the promptName and validate that it is only made of spaces and letters,
+	// and that it is not larger than maxLength. This will not work for something like the address which requires a number and then a string,
+	// or the zip/state which have other criteria.
+	protected String promptForString(Scanner systemInputScanner, String promptName, int maxLength) {
+		String returnValue = "";
+		System.out.println("Please enter the " + promptName + " (" + maxLength + " characters max): ");
+		while (true) {
+			System.out.print("> ");
+			returnValue = systemInputScanner.nextLine();
+			if (returnValue.length() == 0)
+				;
+			else if (returnValue.length() > maxLength)
+				System.out.println("Data is too long to be stored.");
+			else if (validateString(returnValue))
+				break;
+			else
+				System.out.println("Please do not enter anything besides characters and spaces.");
+		}
+
+		return returnValue;
 	}
 
 	// validateString will test if theString isn't an int or a double, allowing for spaces.
