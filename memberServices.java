@@ -53,13 +53,17 @@ public class memberServices{
       return false;
     }
 
+    //Parse file to find member number
     try{
     Object obj = parser.parse(new FileReader(memberFileLocation));
+
     }
     catch(IOException e){
+      System.out.println("IO Exception");
       e.printStackTrace();
     }
     catch(ParseException e){
+      System.out.println("Parse Exception");
       e.printStackTrace();
     }
 
