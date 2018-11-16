@@ -116,6 +116,7 @@ public class ChocAnSystem {
 					break;
 				case 4:
 					theOperator.addProvider(inputScanner);
+					System.out.println();
 					break;
 				case 5:
 					// TODO: edit a provider funcitonality
