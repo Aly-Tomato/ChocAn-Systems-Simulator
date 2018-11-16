@@ -151,8 +151,7 @@ public class Operator {
 
 		try (FileReader reader = new FileReader(providerFileLocation)) {
 
-			returnCode = promptsForAddProvider(systemInputScanner, reader);
-			if (returnCode)
+			if (addProviderHelper(systemInputScanner, reader))
 				System.out.println("The new provider was successfully created and saved.");
 			else
 				System.out.println("The provider directory was not updated.");
@@ -168,158 +167,42 @@ public class Operator {
 		return true;
 	}
 
-	// TODO: refactor/functionize this function when done
-	protected boolean promptsForAddProvider(Scanner systemInputScanner, FileReader reader) throws IOException, ParseException {
-		String repeatLoop = "y";
-		String providerNumber = "";
-		String name = "";
-		String street = "";
-		String city = "";
-		String state = "";
-		String zip = "";
+	protected boolean addProviderHelper(Scanner systemInputScanner, FileReader reader) throws IOException, ParseException {
 		ArrayList<String> serviceNumbers = new ArrayList<String>();
 		ArrayList<String> serviceNames = new ArrayList<String>();
 		ArrayList<Double> serviceFees = new ArrayList<Double>();
-
 		JSONObject newProvider;
 		JSONParser jsonParser = new JSONParser();
 		JSONObject providersJson = (JSONObject) jsonParser.parse(reader);
 
-		// generate provider number
-		while (true) {
-			providerNumber = generateRandomNumber(stakeholderNumberSetLength);
-			if (!providersJson.containsKey(providerNumber))
-				break;
-		}
+		// get unique provider number
+		String providerNumber = generateNewKey(stakeholderNumberSetLength, providersJson);
 
-		name = promptForString(systemInputScanner, "name", stakeholderNameMaxLength);
+		// get name
+		String name = promptForString(systemInputScanner, "name", stakeholderNameMaxLength);
 		System.out.println();
 
 		// get street
-		System.out.println("Please enter the new provider's street address (" + streetMaxLength + " characters max, where the street number is first and the street name is after): ");
-		while (true) {
-			String streetNumber = "";
-			String streetName = "";
-			System.out.print("> ");
-			try {
-				streetNumber += systemInputScanner.nextInt();
-				streetName = systemInputScanner.nextLine();
-				street += (streetNumber + streetName);
-
-				if (street.length() == 0)
-					;
-
-				else if (streetName.length() == 0)
-					System.out.println("Please enter a street number followed by the street name.");
-
-				else if (streetName.charAt(0) != ' ')
-					System.out.println("Please enter a street number followed by the street name, with a space between them.");
-
-				else if (streetName.length() == 1 && streetName.charAt(0) == ' ')
-					System.out.println("Please enter a street number followed by the street name.");
-
-				else if (street.length() > streetMaxLength)
-					System.out.println("That street name was too long to be stored.");
-
-				else if (validateString(streetName))
-					break;
-				else
-					System.out.println("Please do not enter anything besides characters and spaces.");
-
-			} catch (InputMismatchException error) {
-				System.out.println("An example street address would be (ignoring the brackets): [19939 Trade Way].");
-				systemInputScanner.nextLine(); // clear the buffer
-			}
-		}
+		String street = promptForStreet(systemInputScanner);
 		System.out.println();
 
-		city = promptForString(systemInputScanner, "city", cityMaxLength);
+		// get city
+		String city = promptForString(systemInputScanner, "city", cityMaxLength);
 		System.out.println();
 
 		// get state
-		System.out.println("Please enter the new provider's state (" + stateSetLength + " characters): ");
-		while (true) {
-			System.out.print("> ");
-			state = systemInputScanner.nextLine().toUpperCase();
-			if (state.length() == 0)
-				;
-			else if (state.length() != stateSetLength)
-				System.out.println("That data was the wrong size, it must be " + stateSetLength + " digits.");
-			else if (validateString(state) && Character.isLetter(state.charAt(0)) && Character.isLetter(state.charAt(1)))
-				break;
-			else
-				System.out.println("Please do not enter anything besides characters and spaces.");
-		}
+		String state = promptForState(systemInputScanner);
 		System.out.println();
 
 		// get zip
-		System.out.println("Please enter the new provider's ZIP code (" + zipSetLength + "characters): ");
-		while (true) {
-			System.out.print("> ");
-			zip = systemInputScanner.nextLine();
-			if (zip.length() == 0)
-				;
-			else if (zip.length() != zipSetLength)
-				System.out.println("That data was the wrong size, it must be " + zipSetLength + " digits.");
-			else if (validateZipCode(zip))
-				break;
-			else
-				System.out.println("Please do not enter anything besides numbers.");
-		}
+		String zip = promptForZip(systemInputScanner);
 		System.out.println();
 
 		// get service informations
-		while (repeatLoop.equals("y")) {
-			String serviceName = "";
-			Double serviceFee;
-			while (true) {
-				String serviceNumber = generateRandomNumber(serviceNumberSetLength);
-				if (!serviceNumbers.contains(serviceNumber)) {
-					serviceNumbers.add(serviceNumber);
-					break;
-				}
-			}
+		promptForServices(systemInputScanner, serviceNumbers, serviceNames, serviceFees);
+		System.out.println();
 
-			// get a new service name to add
-			serviceNames.add(promptForString(systemInputScanner, "service name", serviceNameMaxLength));
-			System.out.println();
-
-			// get a new service fee to associate with the name
-			System.out.println("Please enter that service's fee (up to $" + serviceMaxPrice + "; do not include punctuation besides a \".\"): ");
-			while (true) {
-				System.out.print("> ");
-				try {
-					serviceFee = systemInputScanner.nextDouble();
-					systemInputScanner.nextLine(); // clear the buffer
-					if (serviceFee > serviceMaxPrice)
-						System.out.println("That data was too large to be stored.");
-					else if (!validDecimals(serviceFee))
-						System.out.println("Up to two decimal places are allowed.");
-					else {
-						serviceFees.add(serviceFee);
-						break;
-					}
-				} catch (InputMismatchException error) {
-					System.out.println("An example price would be (ignoring the brackets): [19.99].");
-					systemInputScanner.nextLine(); // clear the buffer
-				}
-			}
-			System.out.println();
-
-			// TODO: functionize this
-			System.out.println("Would you like to enter another service? (Y/n): ");
-			while (true) {
-				System.out.print("> ");
-				repeatLoop = systemInputScanner.next().toLowerCase();
-				systemInputScanner.nextLine(); // clear the buffer
-				if (!repeatLoop.equals("y") && !repeatLoop.equals("n"))
-					repeatLoop = "y";
-				else
-					break;
-			}
-			System.out.println();
-		}
-
+		// ask to confirm the data
 		System.out.println("The new provider will have the below information:");
 		System.out.println();
 		System.out.println("Number:   " + providerNumber);
@@ -336,32 +219,39 @@ public class Operator {
 		}
 		System.out.println();
 
-		System.out.println("Would you like to continue with this addition or cancel it? (Y/n): ");
-		while (true) {
-			System.out.print("> ");
-			repeatLoop = "x";
-			repeatLoop = systemInputScanner.next().toLowerCase();
-			systemInputScanner.nextLine(); // clear the buffer
-			if (repeatLoop.equals("n"))
-				return false;
-			else if (repeatLoop.equals("y"))
-				break;
-		}
+		// ask the user if they want to save this provider or cancel
+		if (!promptForBool(systemInputScanner, "Would you like to continue with this addition or cancel it?"))
+			return false;
 
+		// build, save, and write the new provider
 		newProvider = buildProviderJson(name, street, city, state, zip, serviceNumbers, serviceNames, serviceFees);
 		providersJson.put(providerNumber, newProvider);
 		writeToFile(providerFileLocation, providersJson);
 		return true;
 	}
 
-	// generateRandomNumber will return a string number that is as many digits as passed in to be.
-	// NOTE: this function isn't super efficient, so if adding a new member/provider/provider's service
-	// starts taking too long to select a number, optimise this function.
-	protected String generateRandomNumber(int digits) {
-		String randomNumber = "";
-		for (int i = 0; i < digits; i++)
-			randomNumber += (int) (Math.random() * 10);
-		return randomNumber;
+	// generateNewKey will return a string number that is a unique key of the passed json or arraylist.
+	protected String generateNewKey(int digits, JSONObject jsonData) {
+		String newKey = "";
+		while (true) {
+			for (int i = 0; i < digits; i++)
+				newKey += (int) (Math.random() * 10);
+
+			if (!jsonData.containsKey(newKey))
+				break;
+		}
+		return newKey;
+	}
+	protected String generateNewKey(int digits, ArrayList<String> currentKeys) {
+		String newKey = "";
+		while (true) {
+			for (int i = 0; i < digits; i++)
+				newKey += (int) (Math.random() * 10);
+
+			if (!currentKeys.contains(newKey))
+				break;
+		}
+		return newKey;
 	}
 
 	// promptForString is a helper function that will prompt the user for the promptName and validate that it is only made of spaces and letters,
@@ -372,7 +262,7 @@ public class Operator {
 		System.out.println("Please enter the " + promptName + " (" + maxLength + " characters max): ");
 		while (true) {
 			System.out.print("> ");
-			returnValue = systemInputScanner.nextLine();
+			returnValue = systemInputScanner.nextLine().trim();
 			if (returnValue.length() == 0)
 				;
 			else if (returnValue.length() > maxLength)
@@ -395,12 +285,132 @@ public class Operator {
 		return true;
 	}
 
+	// promptForStreet is about the same thing as promptForString, but the street has to have
+	// a street number followed by a street name, and this requies additional testing.
+	protected String promptForStreet(Scanner systemInputScanner) {
+		String street = "";
+		System.out.println("Please enter the new provider's street address (" + streetMaxLength + " characters max, where the street number is first and the street name is after): ");
+		while (true) {
+			street = "";
+			String streetNumber = "";
+			String streetName = "";
+			System.out.print("> ");
+			try {
+				streetNumber += systemInputScanner.nextInt();
+				streetName = systemInputScanner.nextLine();
+				street += (streetNumber + streetName);
+				if (street.length() == 0)
+					;
+				else if (streetName.length() == 0)
+					System.out.println("Please enter a street number followed by the street name.");
+				else if (streetName.charAt(0) != ' ')
+					System.out.println("Please enter a street number followed by the street name, with a space between them.");
+				else if (streetName.length() == 1 && streetName.charAt(0) == ' ')
+					System.out.println("Please enter a street number followed by the street name.");
+				else if (street.length() > streetMaxLength)
+					System.out.println("That street name was too long to be stored.");
+				else if (validateString(streetName))
+					break;
+				else
+					System.out.println("Please do not enter anything besides characters and spaces.");
+			} catch (InputMismatchException error) {
+				System.out.println("An example street address would be (ignoring the brackets): [19939 Trade Way].");
+				systemInputScanner.nextLine(); // clear the buffer
+			}
+		}
+		return street;
+	}
+
+	// promptForState is about the same thing as promptForString, but the state has to be
+	// two letters, and this requies additional testing.
+	protected String promptForState(Scanner systemInputScanner) {
+		String state = "";
+		System.out.println("Please enter the new provider's state (" + stateSetLength + " characters): ");
+		while (true) {
+			System.out.print("> ");
+			state = systemInputScanner.nextLine().toUpperCase().trim();
+			if (state.length() == 0)
+				;
+			else if (state.length() != stateSetLength)
+				System.out.println("That data was the wrong size, it must be " + stateSetLength + " digits.");
+			else if (validateString(state) && Character.isLetter(state.charAt(0)) && Character.isLetter(state.charAt(1)))
+				break;
+			else
+				System.out.println("Please do not enter anything besides characters and spaces.");
+		}
+		return state;
+	}
+
+	protected String promptForZip(Scanner systemInputScanner) {
+		String zip = "";
+		System.out.println("Please enter the new provider's ZIP code (" + zipSetLength + "characters): ");
+		while (true) {
+			System.out.print("> ");
+			zip = systemInputScanner.nextLine().trim();
+			if (zip.length() == 0)
+				;
+			else if (zip.length() != zipSetLength)
+				System.out.println("That data was the wrong size, it must be " + zipSetLength + " digits.");
+			else if (validateZipCode(zip))
+				break;
+			else
+				System.out.println("Please do not enter anything besides numbers.");
+		}
+		return zip;
+	}
+
 	// validateZipCode will only validate that the passed string is made entirely of digits.
 	protected boolean validateZipCode(String theZip) {
 		for (int i = 0; i < theZip.length(); i++)
 			if (!Character.isDigit(theZip.charAt(i)))
 				return false;
 		return true;
+	}
+
+	// promptForServices will handle prompting and validating as many services as the user wants to make, and saves them into the passed arraylists.
+	protected void promptForServices(Scanner systemInputScanner, ArrayList<String> serviceNumbers, ArrayList<String> serviceNames, ArrayList<Double> serviceFees) {
+		while (true) {
+			String serviceName = "";
+			Double serviceFee;
+			serviceNumbers.add(generateNewKey(serviceNumberSetLength, serviceNumbers));
+
+			// get a new service name to add
+			serviceNames.add(promptForString(systemInputScanner, "service name", serviceNameMaxLength));
+			System.out.println();
+
+			// get a new service fee to associate with the name
+			serviceFees.add(promptForServiceFee(systemInputScanner));
+			System.out.println();
+
+			// ask if the user wants to make another service
+			if (!promptForBool(systemInputScanner, "Would you like to enter another service?"))
+				return;
+			System.out.println();
+		}
+	}
+
+	// promptForServiceFee will handle prompting and validating the price for a service.
+	protected Double promptForServiceFee(Scanner systemInputScanner) {
+		Double serviceFee;
+		System.out.println("Please enter that service's fee (up to $" + serviceMaxPrice + "; do not include punctuation besides a \".\"): ");
+		while (true) {
+			System.out.print("> ");
+			try {
+				serviceFee = systemInputScanner.nextDouble();
+				systemInputScanner.nextLine(); // clear the buffer
+				if (serviceFee > serviceMaxPrice)
+					System.out.println("That data was too large to be stored.");
+				else if (!validDecimals(serviceFee))
+					System.out.println("Up to two decimal places are allowed.");
+				else {
+					break;
+				}
+			} catch (InputMismatchException error) {
+				System.out.println("An example price would be (ignoring the brackets): [19.99].");
+				systemInputScanner.nextLine(); // clear the buffer
+			}
+		}
+		return serviceFee;
 	}
 
 	// validDecimals will check if the double has too many decimals to be a money,
@@ -420,6 +430,22 @@ public class Operator {
 		}
 
 		return true;
+	}
+
+	// promptForBool will ask the user the message string, append " (Y/n)", and return their response.
+	protected boolean promptForBool(Scanner systemInputScanner, String message) {
+		System.out.println(message + " (Y/n): ");
+		while (true) {
+			System.out.print("> ");
+			String repeatLoop = systemInputScanner.next().toLowerCase();
+			systemInputScanner.nextLine(); // clear the buffer
+			if (!repeatLoop.equals("y") && !repeatLoop.equals("n"))
+				;
+			else if (repeatLoop.equals("y"))
+				return true;
+			else
+				return false;
+		}
 	}
 
 	// buildProviderJson will take the passed info needed to make a new entry in the provider
