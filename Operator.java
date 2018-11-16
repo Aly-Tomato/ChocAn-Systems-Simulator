@@ -25,6 +25,17 @@ import org.json.simple.parser.ParseException;
 public class Operator {
 	protected String memberFileLocation;
 	protected String providerFileLocation;
+	// NOTE: stakeholder is a member or a provider.
+	// NOTE: setLength means the item must be that length.
+	protected int stakeholderNumberSetLength; // it must be this length
+	protected int stakeholderNameMaxLength;
+	protected int serviceNumberSetLength;
+	protected int serviceNameMaxLength;
+	protected int streetMaxLength;
+	protected int cityMaxLength;
+	protected int stateSetLength;
+	protected int zipSetLength;
+	protected double serviceMaxPrice;
 
 	/**
 	 * Default Constructor
@@ -43,6 +54,16 @@ public class Operator {
 	public Operator(String theMemberFileLocation, String theProviderFileLocation) {
 		memberFileLocation = theMemberFileLocation;
 		providerFileLocation = theProviderFileLocation;
+
+		stakeholderNumberSetLength = 9;
+		stakeholderNameMaxLength = 25;
+		serviceNumberSetLength = 6;
+		serviceNameMaxLength = 20;
+		streetMaxLength = 25;
+		cityMaxLength = 14;
+		stateSetLength = 2;
+		zipSetLength = 5;
+		serviceMaxPrice = 99999.99;
 
 		directoryValidation(memberFileLocation);
 		directoryValidation(providerFileLocation);
@@ -134,7 +155,7 @@ public class Operator {
 			if (returnCode)
 				System.out.println("The new provider was successfully created and saved.");
 			else
-				System.out.println("The provider was not created or saved.");
+				System.out.println("The provider directory was not updated.");
 
 		} catch (IOException error) {
 			error.printStackTrace();
@@ -147,21 +168,18 @@ public class Operator {
 		return true;
 	}
 
-	// TODO: have this confirm that everything is correct and let them choose which to edit, and then reconfirm
-	// 		probably put this/use this helper in editProvider
-	// TODO: make the constants for the max sizes protected class vars
 	// TODO: refactor/functionize this function when done
 	protected boolean promptForNewProvider(Scanner systemInputScanner, FileReader reader) throws IOException, ParseException {
 		String repeatLoop = "y";
-		String providerNumber = "";              // 9 Digits
-		String name = "";                // 25 Characters
-		String street = "";              // 25 Characters
-		String city = "";                // 25 Characters
-		String state = "";               // 2 Characters
-		String zip = "";                 // 5 characters
-		ArrayList<String> serviceNumbers = new ArrayList<String>(); // 6 Digits per element
-		ArrayList<String> serviceNames = new ArrayList<String>();   // 20 Characters per element
-		ArrayList<Double> serviceFees = new ArrayList<Double>();    // Up to 99,999.99
+		String providerNumber = "";
+		String name = "";
+		String street = "";
+		String city = "";
+		String state = "";
+		String zip = "";
+		ArrayList<String> serviceNumbers = new ArrayList<String>();
+		ArrayList<String> serviceNames = new ArrayList<String>();
+		ArrayList<Double> serviceFees = new ArrayList<Double>();
 
 		JSONObject providersJson;
 		JSONObject newProvider;
@@ -170,19 +188,19 @@ public class Operator {
 		providersJson = (JSONObject) jsonData;
 
 		while (true) {
-			providerNumber = generateRandomNumber(9);
+			providerNumber = generateRandomNumber(stakeholderNumberSetLength);
 			// TODO: validate that the number is original
 			break;
 		}
 
 		// get name
-		System.out.println("Please enter the new provider's name (25 characters max): ");
+		System.out.println("Please enter the new provider's name (" + stakeholderNameMaxLength + " characters max): ");
 		while (true) {
 			System.out.print("> ");
 			name = systemInputScanner.nextLine();
 			if (name.length() == 0)
 				;
-			else if (name.length() > 25)
+			else if (name.length() > stakeholderNameMaxLength)
 				System.out.println("That data was too long to be stored.");
 			else if (validateString(name))
 				break;
@@ -192,7 +210,7 @@ public class Operator {
 		System.out.println();
 
 		// get street
-		System.out.println("Please enter the new provider's street address (25 characters max, where the street number is first and the street name is after): ");
+		System.out.println("Please enter the new provider's street address (" + streetMaxLength + " characters max, where the street number is first and the street name is after): ");
 		while (true) {
 			String streetNumber = "";
 			String streetName = "";
@@ -214,7 +232,7 @@ public class Operator {
 				else if (streetName.length() == 1 && streetName.charAt(0) == ' ')
 					System.out.println("Please enter a street number followed by the street name.");
 
-				else if (street.length() > 25)
+				else if (street.length() > streetMaxLength)
 					System.out.println("That street name was too long to be stored.");
 
 				else if (validateString(streetName))
@@ -230,13 +248,13 @@ public class Operator {
 		System.out.println();
 
 		// get city
-		System.out.println("Please enter the new provider's city (25 characters max): ");
+		System.out.println("Please enter the new provider's city (" + cityMaxLength + " characters max): ");
 		while (true) {
 			System.out.print("> ");
 			city = systemInputScanner.nextLine();
 			if (city.length() == 0)
 				;
-			else if (city.length() > 25)
+			else if (city.length() > cityMaxLength)
 				System.out.println("That data was too long to be stored.");
 			else if (validateString(city))
 				break;
@@ -246,14 +264,14 @@ public class Operator {
 		System.out.println();
 
 		// get state
-		System.out.println("Please enter the new provider's state (2 characters): ");
+		System.out.println("Please enter the new provider's state (" + stateSetLength + " characters): ");
 		while (true) {
 			System.out.print("> ");
 			state = systemInputScanner.nextLine().toUpperCase();
 			if (state.length() == 0)
 				;
-			else if (state.length() != 2)
-				System.out.println("That data was the wrong size, it must be 2 digits.");
+			else if (state.length() != stateSetLength)
+				System.out.println("That data was the wrong size, it must be " + stateSetLength + " digits.");
 			else if (validateString(state) && Character.isLetter(state.charAt(0)) && Character.isLetter(state.charAt(1)))
 				break;
 			else
@@ -262,14 +280,14 @@ public class Operator {
 		System.out.println();
 
 		// get zip
-		System.out.println("Please enter the new provider's ZIP code (5 characters): ");
+		System.out.println("Please enter the new provider's ZIP code (" + zipSetLength + "characters): ");
 		while (true) {
 			System.out.print("> ");
 			zip = systemInputScanner.nextLine();
 			if (zip.length() == 0)
 				;
-			else if (zip.length() != 5)
-				System.out.println("That data was the wrong size, it must be 5 digits.");
+			else if (zip.length() != zipSetLength)
+				System.out.println("That data was the wrong size, it must be " + zipSetLength + " digits.");
 			else if (validateZipCode(zip))
 				break;
 			else
@@ -282,19 +300,19 @@ public class Operator {
 			String serviceName = "";
 			Double serviceFee;
 			while (true) {
-				String serviceNumber = generateRandomNumber(6);
+				String serviceNumber = generateRandomNumber(serviceNumberSetLength);
 				// TODO: validate that the number is original
 				serviceNumbers.add(serviceNumber);
 				break;
 			}
 
-			System.out.println("Please enter a service name (20 characters max): ");
+			System.out.println("Please enter a service name (" + serviceNameMaxLength + " characters max): ");
 			while (true) {
 				System.out.print("> ");
 				serviceName = systemInputScanner.nextLine();
 				if (serviceName.length() == 0)
 					;
-				else if (serviceName.length() > 20)
+				else if (serviceName.length() > serviceNameMaxLength)
 					System.out.println("That data was too long to be stored.");
 				else if (validateString(serviceName)) {
 					serviceNames.add(serviceName);
@@ -304,13 +322,13 @@ public class Operator {
 			}
 			System.out.println();
 
-			System.out.println("Please enter that service's fee (up to $99,999.99; do not include punctuation besides a \".\"): ");
+			System.out.println("Please enter that service's fee (up to $" + serviceMaxPrice + "; do not include punctuation besides a \".\"): ");
 			while (true) {
 				System.out.print("> ");
 				try {
 					serviceFee = systemInputScanner.nextDouble();
 					systemInputScanner.nextLine(); // clear the buffer
-					if (serviceFee > 99999.99)
+					if (serviceFee > serviceMaxPrice)
 						System.out.println("That data was too large to be stored.");
 					else if (!validDecimals(serviceFee))
 						System.out.println("Up to two decimal places are allowed.");
