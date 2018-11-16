@@ -83,7 +83,7 @@ public class ChocAnSystem {
 	private static void runSubsystem3(Scanner inputScanner) {
 		System.out.println("Loading: Operator Mode");
 		int routineToRun;
-		Operator theOperator = new Operator();
+		OperatorMode theOperator = new OperatorMode();
 
 		while(true) {
 			System.out.println("What routine would you like to use? (Please enter the arabic routine number)");
@@ -115,7 +115,7 @@ public class ChocAnSystem {
 					// TODO: delete a member funcitonality
 					break;
 				case 4:
-					theOperator.addProvider(inputScanner);
+				//	theOperator.addProvider(inputScanner);
 					break;
 				case 5:
 					// TODO: edit a provider funcitonality
