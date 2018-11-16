@@ -14,7 +14,7 @@ import org.json.simple.JSONValue;
  * https://www.mkyong.com/java/json-simple-example-read-and-write-json/
  * https://howtodoinjava.com/json/json-simple-read-write-json-examples/
  * 
- * @author  Group Five: [TODO everyone add your name here] Sawyer Watts, Medina Lamkin
+ * @author  Group Five: Sawyer Watts, Medina Lamkin, Michelle (Dan-Ting) Kuo, Alyssa Tamayo, Victor Cabunoc, and Alexandra Llamas
  * @version 1.0
  * @since   2018-11-01 
  */
