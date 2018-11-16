@@ -151,7 +151,7 @@ public class Operator {
 
 		try (FileReader reader = new FileReader(providerFileLocation)) {
 
-			returnCode = promptForNewProvider(systemInputScanner, reader);
+			returnCode = promptsForAddProvider(systemInputScanner, reader);
 			if (returnCode)
 				System.out.println("The new provider was successfully created and saved.");
 			else
@@ -169,7 +169,7 @@ public class Operator {
 	}
 
 	// TODO: refactor/functionize this function when done
-	protected boolean promptForNewProvider(Scanner systemInputScanner, FileReader reader) throws IOException, ParseException {
+	protected boolean promptsForAddProvider(Scanner systemInputScanner, FileReader reader) throws IOException, ParseException {
 		String repeatLoop = "y";
 		String providerNumber = "";
 		String name = "";
@@ -181,16 +181,14 @@ public class Operator {
 		ArrayList<String> serviceNames = new ArrayList<String>();
 		ArrayList<Double> serviceFees = new ArrayList<Double>();
 
-		JSONObject providersJson;
 		JSONObject newProvider;
 		JSONParser jsonParser = new JSONParser();
-		Object jsonData = jsonParser.parse(reader);
-		providersJson = (JSONObject) jsonData;
+		JSONObject providersJson = (JSONObject) jsonParser.parse(reader);
 
 		while (true) {
 			providerNumber = generateRandomNumber(stakeholderNumberSetLength);
-			// TODO: validate that the number is original
-			break;
+			if (!providersJson.containsKey(providerNumber))
+				break;
 		}
 
 		// get name
@@ -301,9 +299,10 @@ public class Operator {
 			Double serviceFee;
 			while (true) {
 				String serviceNumber = generateRandomNumber(serviceNumberSetLength);
-				// TODO: validate that the number is original
-				serviceNumbers.add(serviceNumber);
-				break;
+				if (!serviceNumbers.contains(serviceNumber)) {
+					serviceNumbers.add(serviceNumber);
+					break;
+				}
 			}
 
 			System.out.println("Please enter a service name (" + serviceNameMaxLength + " characters max): ");
