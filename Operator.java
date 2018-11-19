@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.InputMismatchException;
@@ -27,7 +28,8 @@ public class Operator {
 	protected String providerFileLocation;
 	// NOTE: stakeholder is a member or a provider.
 	// NOTE: setLength means the item must be that length.
-	protected int stakeholderNumberSetLength; // it must be this length
+	// NOTE: maxLength means the item cannot be larger than that length.
+	protected int stakeholderNumberSetLength;
 	protected int stakeholderNameMaxLength;
 	protected int serviceNumberSetLength;
 	protected int serviceNameMaxLength;
@@ -144,17 +146,19 @@ public class Operator {
 	 * @return true if add was successfully written, false else.
 	 */
 	public boolean addProvider(Scanner systemInputScanner) {
-		boolean returnCode = false;
 		System.out.println("\tAdd a Provider:");
 		if (!directoryValidation(providerFileLocation))
 			System.out.println("No " + providerFileLocation + " exists; file with empty data created.");
 
 		try (FileReader reader = new FileReader(providerFileLocation)) {
 
-			if (addProviderHelper(systemInputScanner, reader))
-				System.out.println("The new provider was successfully created and saved.");
-			else
+			if (addProviderHelper(systemInputScanner, reader)) {
+				System.out.println("The provider was successfully updated and saved.");
+				return true;
+			} else {
 				System.out.println("The provider directory was not updated.");
+				return false;
+			}
 
 		} catch (IOException error) {
 			error.printStackTrace();
@@ -163,8 +167,6 @@ public class Operator {
 			error.printStackTrace();
 			return false;
 		}
-
-		return true;
 	}
 
 	protected boolean addProviderHelper(Scanner systemInputScanner, FileReader reader) throws IOException, ParseException {
@@ -203,20 +205,7 @@ public class Operator {
 		System.out.println();
 
 		// ask to confirm the data
-		System.out.println("The new provider will have the below information:");
-		System.out.println();
-		System.out.println("Number:   " + providerNumber);
-		System.out.println("Name:     " + name);
-		System.out.println("Street:   " + street);
-		System.out.println("City:     " + city);
-		System.out.println("State:    " + state);
-		System.out.println("Zip Code: " + zip);
-		for (int i = 0; i < serviceNumbers.size(); i++) {
-			System.out.println("Service " + (i+1) + ": ");
-			System.out.println("\tNumber: " + serviceNumbers.get(i));
-			System.out.println("\tName:   " + serviceNames.get(i));
-			System.out.println("\tFee:    $" + serviceFees.get(i));
-		}
+		printProviderInfo("The new provider will have the below information:", providerNumber, name, street, city, state, zip, serviceNumbers, serviceNames, serviceFees);
 		System.out.println();
 
 		// ask the user if they want to save this provider or cancel
@@ -343,7 +332,7 @@ public class Operator {
 
 	protected String promptForZip(Scanner systemInputScanner) {
 		String zip = "";
-		System.out.println("Please enter the new provider's ZIP code (" + zipSetLength + "characters): ");
+		System.out.println("Please enter the new provider's ZIP code (" + zipSetLength + " characters): ");
 		while (true) {
 			System.out.print("> ");
 			zip = systemInputScanner.nextLine().trim();
@@ -432,6 +421,62 @@ public class Operator {
 		return true;
 	}
 
+	// printProviderInfo will print the provider's information in a nice format, taking either all the info seperately or as a json object.
+	protected void printProviderInfo(String message, String providerNumber, String name, String street, String city, String state, String zip, ArrayList<String> serviceNumbers, ArrayList<String> serviceNames, ArrayList<Double> serviceFees) {
+		System.out.println(message);
+		System.out.println();
+		System.out.println("Number:   " + providerNumber);
+		System.out.println("Name:     " + name);
+		System.out.println("Street:   " + street);
+		System.out.println("City:     " + city);
+		System.out.println("State:    " + state);
+		System.out.println("Zip Code: " + zip);
+		for (int i = 0; i < serviceNumbers.size(); i++) {
+			System.out.println("Service " + (i+1) + ": ");
+			System.out.println("\tNumber: " + serviceNumbers.get(i));
+			System.out.println("\tName:   " + serviceNames.get(i));
+			System.out.println("\tFee:    $" + serviceFees.get(i));
+		}
+	}
+	protected void printProviderInfo(String message, JSONObject providersJson, String providerNumber) {
+		// verify the key is actually in provider_directory
+		if (!providersJson.containsKey(providerNumber)) {
+			System.out.println("The provider number " + providerNumber + " could not be found.");
+			return;
+		}
+
+		ArrayList<String> serviceNumbers = new ArrayList<String>();
+		ArrayList<String> serviceNames = new ArrayList<String>();
+		ArrayList<Double> serviceFees = new ArrayList<Double>();
+
+		String[] providerInfo = extractProviderInfo(providersJson, providerNumber, serviceNumbers, serviceNames, serviceFees);
+
+		printProviderInfo(message, providerNumber, providerInfo[0], providerInfo[1], providerInfo[2], providerInfo[3], providerInfo[4], serviceNumbers, serviceNames, serviceFees);
+	}
+
+	// extractProviderInfo will return an array (see below pseudocode) that will contain the string data of the passed json w/
+	// the passed providerNumber, and will edit the passed ArrayLists. It will add services numbers/names/fees to the already
+	// created ArrayLists, and not clear or malloc them.
+	// 	String[] providerStrings = [name, street, city, state, zip]
+	// NOTE: This function assumes the providerNumber is a valid key of providersJson. Don't use w/o first checking, unknown behavior could occur.
+	protected String[] extractProviderInfo(JSONObject providersJson, String providerNumber, ArrayList<String> serviceNumbers, ArrayList<String> serviceNames, ArrayList<Double> serviceFees) {
+		String[] providerStrings = new String[5];
+		JSONObject providerJson = (JSONObject) providersJson.get(providerNumber);
+		providerStrings[0] = (String) providerJson.get("name");
+		providerStrings[1] = (String) providerJson.get("street");
+		providerStrings[2] = (String) providerJson.get("city");
+		providerStrings[3] = (String) providerJson.get("state");
+		providerStrings[4] = (String) providerJson.get("zipCode");
+
+		JSONObject services = (JSONObject) providerJson.get("serviceNumbers");
+		services.forEach((key, value) -> {
+			serviceNumbers.add((String) key);
+			serviceNames.add((String) ((JSONObject) value).get("name"));
+			serviceFees.add((Double) ((JSONObject) value).get("fee"));
+		});
+		return providerStrings;
+	}
+
 	// promptForBool will ask the user the message string, append " (Y/n)", and return their response.
 	protected boolean promptForBool(Scanner systemInputScanner, String message) {
 		System.out.println(message + " (Y/n): ");
@@ -472,9 +517,221 @@ public class Operator {
 		return newProvider;
 	}
 
-	// TODO: this function
-	public boolean editProvider() {
+	/**
+	 * editProvider will prompt the user for which aspect of a provider in provider_directory to change, and save that changed provider.
+	 *
+	 * @param systemInputScanner The Scanner(System.in) variable.
+	 * @return true if an edit was successfully written, false else.
+	 */
+	public boolean editProvider(Scanner systemInputScanner) {
+		System.out.println("\tEdit a Provider:");
+		if (!directoryValidation(providerFileLocation))
+			System.out.println("No " + providerFileLocation + " exists; file with empty data created.");
+
+		try (FileReader reader = new FileReader(providerFileLocation)) {
+
+			if (editProviderHelper(systemInputScanner, reader)) {
+				System.out.println("The provider was successfully updated and saved.");
+				return true;
+			} else {
+				System.out.println("The provider directory was not updated.");
+				return false;
+			}
+
+		} catch (IOException error) {
+			error.printStackTrace();
+			return false;
+		} catch (ParseException error) {
+			error.printStackTrace();
+			return false;
+		}
+	}
+
+	protected boolean editProviderHelper(Scanner systemInputScanner, FileReader reader) throws IOException, ParseException {
+		JSONParser jsonParser = new JSONParser();
+		JSONObject providersJson = (JSONObject) jsonParser.parse(reader);
+		int valueToChange;
+		boolean doneEditing = false;
+
+		// have the user select the provider to edit
+		String providerNumber = selectUniqueNumber(systemInputScanner, providersJson, stakeholderNumberSetLength);
+
+		JSONObject providerJson = (JSONObject) providersJson.get(providerNumber);
+		// output the current provider info; have the user select what to edit
+		while (!doneEditing) {
+
+			System.out.println();
+			printProviderInfo("This is the provider's current information", providersJson, providerNumber);
+			System.out.println();
+			System.out.println("What aspect would you like to change?");
+			System.out.println();
+			System.out.println("\t0) Discard changes");
+			System.out.println("\t1) Save changes");
+			System.out.println("\t2) Randomly generate a new provider key");
+			System.out.println("\t3) Name");
+			System.out.println("\t4) Street");
+			System.out.println("\t5) City");
+			System.out.println("\t6) State");
+			System.out.println("\t7) Zip Code");
+			System.out.println("\t8) Services Offered");
+			System.out.println();
+			System.out.print("> ");
+
+			valueToChange = systemInputScanner.nextInt();
+			systemInputScanner.nextLine(); // clear the buffer
+			switch (valueToChange) {
+				case 0:
+					return false;
+				case 1:
+					doneEditing = true;
+					break;
+				case 2:
+					// change the provider number and rekey the provider json
+					String newKey = generateNewKey(stakeholderNumberSetLength, providersJson);
+					providerNumber = rekeyUniqueNumber(providerNumber, newKey, providersJson);
+					System.out.println("The new provider number is " + providerNumber);
+					break;
+				case 3:
+					// change the name
+					String name = promptForString(systemInputScanner, "name", stakeholderNameMaxLength);
+					providerJson.replace("name", name);
+					System.out.println("The new provider name is " + name);
+					break;
+				case 4:
+					// change the street
+					String street = promptForStreet(systemInputScanner);
+					providerJson.replace("street", street);
+					System.out.println("The new provider street is " + street);
+					break;
+				case 5:
+					// change the city
+					String city = promptForString(systemInputScanner, "city", cityMaxLength);
+					providerJson.replace("city", city);
+					System.out.println("The new provider city is " + city);
+					break;
+				case 6:
+					// change the state
+					String state = promptForState(systemInputScanner);
+					providerJson.replace("state", state);
+					System.out.println("The new provider state is " + state);
+					break;
+				case 7:
+					// change the zip
+					String zip = promptForZip(systemInputScanner);
+					providerJson.replace("zipCode", zip);
+					System.out.println("The new provider ZIP Code is " + zip);
+					break;
+				case 8:
+					// edit the services
+					editProviderServices(systemInputScanner, providerJson);
+					break;
+				default:
+					System.out.println("The input of [" + valueToChange + "] is not valid; try again.");
+					break;
+			}
+		}
+
+		// save changes to disk
+		providersJson.replace(providerNumber, providerJson);
+		writeToFile(providerFileLocation, providersJson);
 		return true;
+	}
+
+	// selectUniqueNumber will output the stakeholder or service numbers and names in the passed json,
+	// and handle prompting the user for a valid stakeholder's number which will be returned.
+	protected String selectUniqueNumber(Scanner systemInputScanner, JSONObject thesJson, int length) {
+		String theNumber = "";
+		System.out.println("Please select enter the ID number you would like to edit:");
+		System.out.println();
+		thesJson.forEach((key, value) -> {
+				System.out.print((String) ((JSONObject) value).get("name"));
+				System.out.print(": ");
+				System.out.println((String) key);
+		});
+
+		while (true) {
+			System.out.print("> ");
+			theNumber = systemInputScanner.next();
+			systemInputScanner.nextLine(); // clear the buffer
+			if (theNumber.length() != length)
+				System.out.println("That entry is an incorrect length; it must be " + length + " characters long.");
+			else if (!thesJson.containsKey(theNumber))
+				System.out.println("Invalid the number. Must be made of integers only and be present on the above list.");
+			else
+				return theNumber;
+		}
+	}
+
+	// rekeyUniqueNumber will change the stakeholder key to the new one, and return the new key.
+	// NOTE: rekeyUniqueNumber assumes the oldNumber is a valid stakeholder key and newNumber
+	// is an unused stakeholder key; use w/ invalid keys may result in undesired behavior.
+	// For best calling, use the below example (taken from editProviderHelper):
+	// providerNumber = rekeyUniqueNumber(providerNumber, generateNewKey(stakeholderNumberSetLength, providersJson), providersJson);
+	protected String rekeyUniqueNumber(String oldNumber, String newNumber, JSONObject theJson) {
+		JSONObject valueInfo = (JSONObject) theJson.remove(oldNumber);
+		theJson.put(newNumber, valueInfo);
+		return newNumber;
+	}
+
+	// editProviderServices will allow for editing of the different services offered by the passed provider.
+	protected void editProviderServices(Scanner systemInputScanner, JSONObject providerJson) {
+		int valueToChange;
+		String serviceNumber = selectUniqueNumber(systemInputScanner, (JSONObject) providerJson.get("serviceNumbers"), serviceNumberSetLength);
+		JSONObject servicesJson = (JSONObject) providerJson.get("serviceNumbers");
+		JSONObject serviceJson = (JSONObject) servicesJson.get(serviceNumber);
+		while (true) {
+			System.out.println();
+			System.out.println("These are the current service's information");
+			System.out.println();
+			System.out.println("Number: " + serviceNumber);
+			System.out.println("Name:   " + (String) serviceJson.get("name"));
+			System.out.println("Fee:    " + (Double) serviceJson.get("fee"));
+			System.out.println();
+			System.out.println("Which service aspect would you like to edit?");
+			System.out.println();
+			System.out.println("\t0) Done editing service");
+			System.out.println("\t1) Delete this service");
+			System.out.println("\t2) Randomly generate a new service key");
+			System.out.println("\t3) Name");
+			System.out.println("\t4) Fee");
+			System.out.println();
+			System.out.print("> ");
+
+			valueToChange = systemInputScanner.nextInt();
+			systemInputScanner.nextLine(); // clear the buffer
+			switch (valueToChange) {
+				case 0:
+					// save changes
+					providerJson.replace(serviceNumber, serviceJson);
+					return;
+				case 1:
+					// delete the service
+					servicesJson.remove(serviceNumber);
+					System.out.println("The service was deleted");
+					return;
+				case 2:
+					// generate a new serive key
+					String newKey = generateNewKey(serviceNumberSetLength, servicesJson);
+					serviceNumber = rekeyUniqueNumber(serviceNumber, newKey, servicesJson);
+					System.out.println("The new service number is " + serviceNumber);
+					break;
+				case 3:
+					// get the new name
+					String name = promptForString(systemInputScanner, "service name", serviceNameMaxLength);
+					serviceJson.replace("name", name);
+					System.out.println("The new service name is " + name);
+					break;
+				case 4:
+					// get the new fee
+					Double fee = promptForServiceFee(systemInputScanner);
+					serviceJson.replace("fee", fee);
+					System.out.println("The new service fee is $" + fee);
+					break;
+				default:
+					System.out.println("The input of [" + valueToChange + "] is not valid; try again.");
+					break;
+			}
+		}
 	}
 
 	// TODO: this function
