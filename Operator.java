@@ -555,6 +555,9 @@ public class Operator {
 
 		// have the user select the provider to edit
 		String providerNumber = selectUniqueNumber(systemInputScanner, providersJson, stakeholderNumberSetLength);
+		if (providerNumber.equals(""))
+			return false;
+
 
 		JSONObject providerJson = (JSONObject) providersJson.get(providerNumber);
 		// output the current provider info; have the user select what to edit
@@ -639,11 +642,19 @@ public class Operator {
 
 	// selectUniqueNumber will output the stakeholder or service numbers and names in the passed json,
 	// and handle prompting the user for a valid stakeholder's number which will be returned.
-	protected String selectUniqueNumber(Scanner systemInputScanner, JSONObject thesJson, int length) {
+	// This function will return "" if the passed json is emtpy, and print about it being empty.
+	// Check for the empty return value!!
+	protected String selectUniqueNumber(Scanner systemInputScanner, JSONObject theJson, int length) {
 		String theNumber = "";
-		System.out.println("Please select enter the ID number you would like to edit:");
+
+		if (theJson.isEmpty()) {
+			System.out.println("There is not data to be chosen.");
+			return theNumber;
+		}
+
+		System.out.println("Please select enter the ID number you would like to work with:");
 		System.out.println();
-		thesJson.forEach((key, value) -> {
+		theJson.forEach((key, value) -> {
 				System.out.print((String) ((JSONObject) value).get("name"));
 				System.out.print(": ");
 				System.out.println((String) key);
@@ -655,7 +666,7 @@ public class Operator {
 			systemInputScanner.nextLine(); // clear the buffer
 			if (theNumber.length() != length)
 				System.out.println("That entry is an incorrect length; it must be " + length + " characters long.");
-			else if (!thesJson.containsKey(theNumber))
+			else if (!theJson.containsKey(theNumber))
 				System.out.println("Invalid the number. Must be made of integers only and be present on the above list.");
 			else
 				return theNumber;
@@ -677,6 +688,9 @@ public class Operator {
 	protected void editProviderServices(Scanner systemInputScanner, JSONObject providerJson) {
 		int valueToChange;
 		String serviceNumber = selectUniqueNumber(systemInputScanner, (JSONObject) providerJson.get("serviceNumbers"), serviceNumberSetLength);
+		if (serviceNumber.equals(""))
+			return;
+
 		JSONObject servicesJson = (JSONObject) providerJson.get("serviceNumbers");
 		JSONObject serviceJson = (JSONObject) servicesJson.get(serviceNumber);
 		while (true) {
@@ -734,8 +748,45 @@ public class Operator {
 		}
 	}
 
-	// TODO: this function
-	public boolean deleteProvider() {
+	/**
+	 * deleteProvider will prompt the user for provider in provider in provider_directory to delete.
+	 *
+	 * @param systemInputScanner The Scanner(System.in) variable.
+	 * @return true if a provider was deleted and successfully written, false else.
+	 */
+	public boolean deleteProvider(Scanner systemInputScanner) {
+		System.out.println("\tDelete a Provider:");
+		if (!directoryValidation(providerFileLocation)) {
+			System.out.println("No " + providerFileLocation + " exists; file with empty data created.");
+			System.out.println("An empty file has no data; therefore, there are not providers to delete.");
+			return false;
+		}
+
+		try (FileReader reader = new FileReader(providerFileLocation)) {
+
+			JSONParser jsonParser = new JSONParser();
+			JSONObject providersJson = (JSONObject) jsonParser.parse(reader);
+
+			// have the user select the provider to delete
+			String providerNumber = selectUniqueNumber(systemInputScanner, providersJson, stakeholderNumberSetLength);
+			if (providerNumber.equals("")) {
+				System.out.println("The provider directory was not updated.");
+				return false;
+			}
+
+			// delete provider and save changes to disk
+			providersJson.remove(providerNumber);
+			writeToFile(providerFileLocation, providersJson);
+
+		} catch (IOException error) {
+			error.printStackTrace();
+			return false;
+		} catch (ParseException error) {
+			error.printStackTrace();
+			return false;
+		}
+
+		System.out.println("The provider was successfully deleted.");
 		return true;
 	}
 }
