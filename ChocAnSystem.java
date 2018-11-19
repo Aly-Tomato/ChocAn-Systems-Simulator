@@ -119,7 +119,8 @@ public class ChocAnSystem {
 					System.out.println();
 					break;
 				case 5:
-					// TODO: edit a provider funcitonality
+					theOperator.editProvider(inputScanner);
+					System.out.println();
 					break;
 				case 6:
 					// TODO: delete a provider funcitonality
