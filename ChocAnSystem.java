@@ -123,7 +123,8 @@ public class ChocAnSystem {
 					System.out.println();
 					break;
 				case 6:
-					// TODO: delete a provider funcitonality
+					theOperator.deleteProvider(inputScanner);
+					System.out.println();
 					break;
 				default:
 					System.out.println("The input of [" + routineToRun + "] is not valid; try again.");

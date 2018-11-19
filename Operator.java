@@ -641,7 +641,7 @@ public class Operator {
 	// and handle prompting the user for a valid stakeholder's number which will be returned.
 	protected String selectUniqueNumber(Scanner systemInputScanner, JSONObject thesJson, int length) {
 		String theNumber = "";
-		System.out.println("Please select enter the ID number you would like to edit:");
+		System.out.println("Please select enter the ID number you would like to work with:");
 		System.out.println();
 		thesJson.forEach((key, value) -> {
 				System.out.print((String) ((JSONObject) value).get("name"));
@@ -734,8 +734,41 @@ public class Operator {
 		}
 	}
 
-	// TODO: this function
-	public boolean deleteProvider() {
+	/**
+	 * deleteProvider will prompt the user for provider in provider in provider_directory to delete.
+	 *
+	 * @param systemInputScanner The Scanner(System.in) variable.
+	 * @return true if a provider was deleted and successfully written, false else.
+	 */
+	public boolean deleteProvider(Scanner systemInputScanner) {
+		System.out.println("\tDelete a Provider:");
+		if (!directoryValidation(providerFileLocation)) {
+			System.out.println("No " + providerFileLocation + " exists; file with empty data created.");
+			System.out.println("An empty file has no data; therefore, there are not providers to delete.");
+			return false;
+		}
+
+		try (FileReader reader = new FileReader(providerFileLocation)) {
+
+			JSONParser jsonParser = new JSONParser();
+			JSONObject providersJson = (JSONObject) jsonParser.parse(reader);
+
+			// have the user select the provider to delete
+			String providerNumber = selectUniqueNumber(systemInputScanner, providersJson, stakeholderNumberSetLength);
+
+			// delete provider and save changes to disk
+			providersJson.remove(providerNumber);
+			writeToFile(providerFileLocation, providersJson);
+
+		} catch (IOException error) {
+			error.printStackTrace();
+			return false;
+		} catch (ParseException error) {
+			error.printStackTrace();
+			return false;
+		}
+
+		System.out.println("The provider was successfully deleted.");
 		return true;
 	}
 }
