@@ -7,6 +7,9 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.FileReader;
+import java.util.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -79,10 +82,36 @@ public class memberServices{
       return false;
     }
 
-  protected boolean writeReport(int provider, int service, String memberFileLocation)
+  protected boolean writeReport(int provider, int service, String fileLocation)
   {
+		/* General Json Structure for provider_report 
+		 * 
+		 * {
+     *  "date" (MM-DD-YYYY):{
+		 * 	  "time" (HH:MM:SS), 
+		 * 	  "dateServProvided" (MM-DD-YYYY), 
+		 * 		"providerNumber": (9digits;string),
+		 * 	  "memberNumber" (9 digits; string),
+		 * 	  "serviceCode" (6 digits; string),
+		 * 		"comments": provider comments(100 characters; string),
+		 * 	}
+		 */
+    DateFormat dateFormat = new SimpleDateFormat("MM-DD-YYYY");
+    Date date = new Date();
+    String filename = new String(provider+"_"+service+"_"+dateFormat.format(date)); 
 
+    try { 
+    File outputFile = new File(filename);
+    if(!outputFile.exists()){
+      outputFile.createNewFile();
+    }
+    BufferedWriter outputFileWriter = new BufferedWriter(new FileWriter(outputFile));
 
+    } catch (IOException e) {
+      e.printStackTrace();
+      return false;
+    }
+    return true;
+ }
 
-  }
 }
