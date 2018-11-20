@@ -23,7 +23,7 @@ public class memberServices{
   
   //data fields
   protected int provider; //9-digit provider# 
-  protected int member;  // 9-digit provider#
+  //protected int member;  // 9-digit provider#
   protected String status;
   protected String comments;
   protected int size = 20;
@@ -43,21 +43,26 @@ public class memberServices{
       try{
         Object obj = parser.parse(new FileReader(memberFileLocation));
         JSONObject jsonObject = (JSONObject) obj;
+        
+        String member = new String();
+        member = (String)jsonObject.get("memberNumber");
+        int value = Integer.parseInt(member);
 
-        member = (int)jsonObject.get("memberNumber");
-        if(member == number) return true;
+        
+        if(value == number) return true;
       }
       catch(IOException e){
+        System.out.println("exception err");
         e.printStackTrace();
       }
       catch(ParseException e){
+        System.out.println("parse err");
         e.printStackTrace();
       }
 
       
       return false;
-
-    }
+}
 
   protected boolean isSuspended(int number, String memberFileLocation){
       //check if member number is appropriate length
