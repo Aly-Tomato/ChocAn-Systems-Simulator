@@ -15,13 +15,13 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 
-
 public class memberServices{
 
   
   //data fields
   protected int provider; //9-digit provider# 
   protected int member;  // 9-digit provider#
+  protected String status;
   protected String comments;
   protected int size = 20;
   //protected int [] memDirectory = new int[size];
@@ -30,30 +30,59 @@ public class memberServices{
   protected JSONParser parser = new JSONParser();
   //protected JSONObject serviceReport = new JSONObject();
 
-
   protected boolean isValid(int number, String memberFileLocation){
-    //check if member number is appropriate length
-    if(number < 100000000 || number > 999999999){
+      //check if member number is appropriate length
+      if(number < 100000000 || number > 999999999){
+        return false;
+      }
+
+      //Parse file to find member number
+      try{
+        Object obj = parser.parse(new FileReader(memberFileLocation));
+        JSONObject jsonObject = (JSONObject) obj;
+
+        member = (int)jsonObject.get("memberNumber");
+        if(member == number) return true;
+      }
+      catch(IOException e){
+        e.printStackTrace();
+      }
+      catch(ParseException e){
+        e.printStackTrace();
+      }
+
+      
+      return false;
+
+    }
+
+  protected boolean isSuspended(int number, String memberFileLocation){
+      //check if member number is appropriate length
+      if(number < 100000000 || number > 999999999){
+        return false;
+      }
+
+      //Parse file to find member number
+      try{
+        Object obj = parser.parse(new FileReader(memberFileLocation));
+        JSONObject jsonObject = (JSONObject) obj;
+        status = new String();
+        status = (String)jsonObject.get("Status");
+        if(status == "Suspended") return true;
+      }
+      catch(IOException e){
+        e.printStackTrace();
+      }
+      catch(ParseException e){
+        e.printStackTrace();
+      }
       return false;
     }
 
-    //Parse file to find member number
-    try{
-      Object obj = parser.parse(new FileReader(memberFileLocation));
-      JSONObject jsonObject = (JSONObject) obj;
+  protected boolean writeReport(int provider, int service, String memberFileLocation)
+  {
 
-      member = (int)jsonObject.get("memberNumber");
-      if(member == number) return true;
-    }
-    catch(IOException e){
-      e.printStackTrace();
-    }
-    catch(ParseException e){
-      e.printStackTrace();
-    }
 
-    
-    return false;
 
   }
 }
