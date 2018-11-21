@@ -21,6 +21,7 @@ Compilation Conventions (assumes Unix system):
 
 Coding Conventions:
 
+    Classes will use CamelCase and non-classes will use camelCase.
 	Tab, so the spacing can set to whatever the individual wants.
 	Try to keep functions ~25 lines max.
 	Some level of avoiding nesting.
