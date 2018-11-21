@@ -21,7 +21,7 @@ import org.json.simple.parser.ParseException;
  *
  * @author  Medina Lamkin and Sawyer Watts
  * @version 1.0
- * @since   2018-11-13 
+ * @since   2018-11-13
  */
 public class Operator {
 	protected String memberFileLocation;
@@ -105,8 +105,75 @@ public class Operator {
 		return true;
 	}
 
-	public boolean addMember() {
-		// reminder to always directoryValidation; see addProvider for an example with the output message I used
+	/**
+	 * addMember will prompt the user for the information needed to add another member to member_directory, and save that member.
+	 *
+	 * @param systemInputScanner The Scanner(System.in) variable.
+	 * @return true if add was successfully written, false else.
+	 */
+	public boolean addMember(Scanner systemInputScanner) {
+		System.out.println("\n\tAdd a Member:");
+		if (!directoryValidation(memberFileLocation))
+			System.out.println("No " + memberFileLocation + " exists; file with empty data created.");
+
+		try (FileReader reader = new FileReader(memberFileLocation)) {
+			if (addMemberHelper(systemInputScanner, reader)) {
+				System.out.println("The member was successfully updated and saved.");
+				return true;
+			} else {
+				System.out.println("The member directory was not updated.");
+				return false;
+			}
+
+		} catch (IOException error) {
+			error.printStackTrace();
+			return false;
+		} catch (ParseException error) {
+			error.printStackTrace();
+			return false;
+		}
+	}
+
+	protected boolean addMemberHelper(Scanner systemInputScanner, FileReader reader) throws IOException, ParseException {
+		JSONObject newMember;
+		JSONParser jsonParser = new JSONParser();
+		JSONObject membersJson = (JSONObject) jsonParser.parse(reader);
+
+		// get unique provider number
+		String memberNumber = generateNewKey(stakeholderNumberSetLength, membersJson);
+
+		// get name
+		String name = promptForString(systemInputScanner, "name", stakeholderNameMaxLength);
+		System.out.println();
+
+		// get street
+		String street = promptForStreet(systemInputScanner);
+		System.out.println();
+
+		// get city
+		String city = promptForString(systemInputScanner, "city", cityMaxLength);
+		System.out.println();
+
+		// get state
+		String state = promptForState(systemInputScanner);
+		System.out.println();
+
+		// get zip
+		String zip = promptForZip(systemInputScanner);
+		System.out.println();
+
+		// ask to confirm the data
+		printMemberInfo("The new member will have the below information:", memberNumber, name, street, city, state, zip, "Valid");
+		System.out.println();
+
+		// ask the user if they want to save this provider or cancel
+		if (!promptForBool(systemInputScanner, "Would you like to continue with this addition or cancel it?"))
+			return false;
+
+		// build, save, and write the new provider
+		newMember = buildMemberJson(name, street, city, state, zip);
+		membersJson.put(memberNumber, newMember);
+		writeToFile(memberFileLocation, membersJson);
 		return true;
 	}
 
@@ -131,13 +198,172 @@ public class Operator {
 		return true;
 	}
 
-	public boolean editMember() {
+	/**
+	 * editMember will prompt the user for which aspect of a member in member_directory to change, and save that changed member.
+	 *
+	 * @param systemInputScanner The Scanner(System.in) variable.
+	 * @return true if an edit was successfully written, false else.
+	 */
+	public boolean editMember(Scanner systemInputScanner) {
+		System.out.println("\tEdit a Member:");
+		if (!directoryValidation(memberFileLocation))
+			System.out.println("No " + memberFileLocation + " exists; file with empty data created.");
+
+		try (FileReader reader = new FileReader(memberFileLocation)) {
+
+			if (editMemberHelper(systemInputScanner, reader)) {
+				System.out.println("The member was successfully updated and saved.");
+				return true;
+			} else {
+				System.out.println("The member directory was not updated.");
+				return false;
+			}
+
+		} catch (IOException error) {
+			error.printStackTrace();
+			return false;
+		} catch (ParseException error) {
+			error.printStackTrace();
+			return false;
+		}
+	}
+
+	protected boolean editMemberHelper(Scanner systemInputScanner, FileReader reader) throws IOException, ParseException {
+		JSONParser jsonParser = new JSONParser();
+		JSONObject membersJson = (JSONObject) jsonParser.parse(reader);
+		int valueToChange;
+		boolean doneEditing = false;
+
+		// have the user select the member to edit
+		String memberNumber = selectUniqueNumber(systemInputScanner, membersJson, stakeholderNumberSetLength);
+		if (memberNumber.equals(""))
+			return false;
+
+
+		JSONObject memberJson = (JSONObject) membersJson.get(memberNumber);
+		// output the current member info; have the user select what to edit
+		while (!doneEditing) {
+
+			System.out.println();
+			printMemberInfo("This is the member's current information", membersJson, memberNumber);
+			System.out.println();
+			System.out.println("What aspect would you like to change?");
+			System.out.println();
+			System.out.println("\t0) Discard changes");
+			System.out.println("\t1) Save changes");
+			System.out.println("\t2) Randomly generate a new member key");
+			System.out.println("\t3) Name");
+			System.out.println("\t4) Street");
+			System.out.println("\t5) City");
+			System.out.println("\t6) State");
+			System.out.println("\t7) Zip Code");
+			System.out.println("\t8) Status");
+			System.out.println();
+			System.out.print("> ");
+
+			valueToChange = systemInputScanner.nextInt();
+			systemInputScanner.nextLine(); // clear the buffer
+			switch (valueToChange) {
+				case 0:
+					return false;
+				case 1:
+					doneEditing = true;
+					break;
+				case 2:
+					// change the member number and rekey the member json
+					String newKey = generateNewKey(stakeholderNumberSetLength, membersJson);
+					memberNumber = rekeyUniqueNumber(memberNumber, newKey, membersJson);
+					System.out.println("The new member number is " + memberNumber);
+					break;
+				case 3:
+					// change the name
+					String name = promptForString(systemInputScanner, "name", stakeholderNameMaxLength);
+					memberJson.replace("name", name);
+					System.out.println("The new member name is " + name);
+					break;
+				case 4:
+					// change the street
+					String street = promptForStreet(systemInputScanner);
+					memberJson.replace("street", street);
+					System.out.println("The new member street is " + street);
+					break;
+				case 5:
+					// change the city
+					String city = promptForString(systemInputScanner, "city", cityMaxLength);
+					memberJson.replace("city", city);
+					System.out.println("The new member city is " + city);
+					break;
+				case 6:
+					// change the state
+					String state = promptForState(systemInputScanner);
+					memberJson.replace("state", state);
+					System.out.println("The new member state is " + state);
+					break;
+				case 7:
+					// change the zip
+					String zip = promptForZip(systemInputScanner);
+					memberJson.replace("zipCode", zip);
+					System.out.println("The new provider ZIP Code is " + zip);
+					break;
+				case 8:
+					String status = promptForStatus(systemInputScanner);
+					memberJson.replace("status", status);
+					System.out.println("The member is now " + status);
+					break;
+				default:
+					System.out.println("The input of [" + valueToChange + "] is not valid; try again.");
+					break;
+			}
+		}
+
+		// save changes to disk
+		membersJson.replace(memberNumber, memberJson);
+		writeToFile(memberFileLocation, membersJson);
 		return true;
 	}
 
-	public boolean deleteMember() {
+	/**
+	 * deleteMember will prompt the user for member in member_directory to delete.
+	 *
+	 * @param systemInputScanner The Scanner(System.in) variable.
+	 * @return true if a member was deleted and successfully written, false else.
+	 */
+	public boolean deleteMember(Scanner systemInputScanner) {
+		System.out.println("\tDelete a Member:");
+		if (!directoryValidation(memberFileLocation)) {
+			System.out.println("No " + memberFileLocation + " exists; file with empty data created.");
+			System.out.println("An empty file has no data; therefore, there are not members to delete.");
+			return false;
+		}
+
+		try (FileReader reader = new FileReader(memberFileLocation)) {
+
+			JSONParser jsonParser = new JSONParser();
+			JSONObject membersJson = (JSONObject) jsonParser.parse(reader);
+
+			// have the user select the member to delete
+			String memberNumber = selectUniqueNumber(systemInputScanner, membersJson, stakeholderNumberSetLength);
+			if (memberNumber.equals("")) {
+				System.out.println("The member directory was not updated.");
+				return false;
+			}
+
+			// delete member and save changes to disk
+			membersJson.remove(memberNumber);
+			writeToFile(memberFileLocation, membersJson);
+
+		} catch (IOException error) {
+			error.printStackTrace();
+			return false;
+		} catch (ParseException error) {
+			error.printStackTrace();
+			return false;
+		}
+
+		System.out.println("The member was successfully deleted.");
 		return true;
 	}
+
 
 	/**
 	 * addProvider will prompt the user for the information needed to add another provider to provider_directory, and save that provider.
@@ -278,7 +504,7 @@ public class Operator {
 	// a street number followed by a street name, and this requies additional testing.
 	protected String promptForStreet(Scanner systemInputScanner) {
 		String street = "";
-		System.out.println("Please enter the new provider's street address (" + streetMaxLength + " characters max, where the street number is first and the street name is after): ");
+		System.out.println("Please enter the new provider/member street address (" + streetMaxLength + " characters max, where the street number is first and the street name is after): ");
 		while (true) {
 			street = "";
 			String streetNumber = "";
@@ -314,7 +540,7 @@ public class Operator {
 	// two letters, and this requies additional testing.
 	protected String promptForState(Scanner systemInputScanner) {
 		String state = "";
-		System.out.println("Please enter the new provider's state (" + stateSetLength + " characters): ");
+		System.out.println("Please enter the new provider/member's state (" + stateSetLength + " characters): ");
 		while (true) {
 			System.out.print("> ");
 			state = systemInputScanner.nextLine().toUpperCase().trim();
@@ -332,7 +558,7 @@ public class Operator {
 
 	protected String promptForZip(Scanner systemInputScanner) {
 		String zip = "";
-		System.out.println("Please enter the new provider's ZIP code (" + zipSetLength + " characters): ");
+		System.out.println("Please enter the new provider/member's ZIP code (" + zipSetLength + " characters): ");
 		while (true) {
 			System.out.print("> ");
 			zip = systemInputScanner.nextLine().trim();
@@ -421,6 +647,25 @@ public class Operator {
 		return true;
 	}
 
+	// promptForStatus is a helper function that will prompt the user for "v" or "s" which correspond to valid and suspended.
+  // and validate that only one of these options was entered
+	protected String promptForStatus(Scanner systemInputScanner) {
+		String returnValue = "";
+		System.out.println("Please enter s to change status to suspended or v to change status to valid");
+		while (true) {
+			System.out.print("> ");
+			returnValue = systemInputScanner.nextLine().trim();
+			if (returnValue.length() == 0)
+				;
+			else if (returnValue.equalsIgnoreCase("v"))
+				return "Valid";
+			else if (returnValue.equalsIgnoreCase("s"))
+				return "Suspended";
+			else
+				System.out.println("Please do not enter anything besides s or v.");
+		}
+	}
+
 	// printProviderInfo will print the provider's information in a nice format, taking either all the info seperately or as a json object.
 	protected void printProviderInfo(String message, String providerNumber, String name, String street, String city, String state, String zip, ArrayList<String> serviceNumbers, ArrayList<String> serviceNames, ArrayList<Double> serviceFees) {
 		System.out.println(message);
@@ -477,6 +722,47 @@ public class Operator {
 		return providerStrings;
 	}
 
+	// printMemberInfo will print the member's information in a nice format, taking either all the info seperately or as a json object.
+	protected void printMemberInfo(String message, String memberNumber, String name, String street, String city, String state, String zip, String status) {
+		System.out.println(message);
+		System.out.println();
+		System.out.println("Number:    " + memberNumber);
+		System.out.println("Name:      " + name);
+		System.out.println("Street:    " + street);
+		System.out.println("City:      " + city);
+		System.out.println("State:     " + state);
+		System.out.println("Zip Code:  " + zip);
+    System.out.println("Status:    " + status);
+	}
+	protected void printMemberInfo(String message, JSONObject membersJson, String memberNumber) {
+		// verify the key is actually in member_directory
+		if (!membersJson.containsKey(memberNumber)) {
+			System.out.println("The member number " + memberNumber + " could not be found.");
+			return;
+		}
+
+		String[] memberInfo = extractMemberInfo(membersJson, memberNumber);
+
+		printMemberInfo(message, memberNumber, memberInfo[0], memberInfo[1], memberInfo[2], memberInfo[3], memberInfo[4], memberInfo[5]);
+	}
+
+	// extractMemberInfo will return an array that will contain the string data of the passed json w/ the passed memberNumber
+  // String[] memberStrings = [name, street, city, state, zip, status]
+	// NOTE: This function assumes the memberNumber is a valid key of membersJson. Don't use w/o first checking, unknown behavior could occur.
+	protected String[] extractMemberInfo(JSONObject membersJson, String memberNumber) {
+		String[] memberStrings = new String[6];
+		JSONObject memberJson = (JSONObject) membersJson.get(memberNumber);
+		memberStrings[0] = (String) memberJson.get("name");
+		memberStrings[1] = (String) memberJson.get("street");
+		memberStrings[2] = (String) memberJson.get("city");
+		memberStrings[3] = (String) memberJson.get("state");
+		memberStrings[4] = (String) memberJson.get("zipCode");
+		memberStrings[5] = (String) memberJson.get("status");
+
+		return memberStrings;
+	}
+
+
 	// promptForBool will ask the user the message string, append " (Y/n)", and return their response.
 	protected boolean promptForBool(Scanner systemInputScanner, String message) {
 		System.out.println(message + " (Y/n): ");
@@ -516,6 +802,22 @@ public class Operator {
 
 		return newProvider;
 	}
+	// buildMemberJson will take the passed info needed to make a new entry in the member
+	// json, and returns the value to be the value in the memberNumber-memberInfo pair.
+	protected JSONObject buildMemberJson(String name, String street, String city, String state, String zip) {
+		JSONObject newMember = new JSONObject();
+		JSONObject memberNumber = new JSONObject();
+
+		newMember.put("name", name);
+		newMember.put("street", street);
+		newMember.put("city", city);
+		newMember.put("state", state);
+		newMember.put("zipCode", zip);
+		newMember.put("status", "Valid");        //members will be start off as being valid as they don't owe any fees
+
+		return newMember;
+	}
+
 
 	/**
 	 * editProvider will prompt the user for which aspect of a provider in provider_directory to change, and save that changed provider.
