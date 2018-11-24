@@ -1,1 +1,9 @@
-{"000000010":"Suspended","000000020":"Valid","000000002":"Suspended","000000001":"Valid","039390041":"Valid","000000005":"Valid","000000004":"Suspended","000000015":"Suspended"}
+{
+  "memberNumber":"123456789",
+  "zipCode":"44444",
+  "city":"West Linn",
+  "street":"205 Apple Ln",
+  "name":"Providence",
+  "state":"OR",
+  "status":"Suspended"
+}
