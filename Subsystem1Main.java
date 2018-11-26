@@ -20,10 +20,11 @@ public class Subsystem1Main {
         System.out.println("\n\nHello Provider,");
         System.out.println("-Please enter your 9 digit provider number-");
         System.out.println("ID Number: ");
-        int ProviderID = getInt(inputScanner);
+        int ProviderID = getInt(inputScanner); //Gets input from User
 
         String memberFileLocation = new String();
         memberFileLocation = "./directories/member_directory";
+
         if(obj.isValid(ProviderID, memberFileLocation)) {
             System.out.println("TRUE");
             return;
