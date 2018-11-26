@@ -20,21 +20,31 @@ public class Subsystem1Main {
         System.out.println("\n\nHello Provider,");
         System.out.println("-Please enter your 9 digit provider number-");
         System.out.println("ID Number: ");
-        int ProviderID = getInt(inputScanner); //Gets input from User
+        int providerID = getInt(inputScanner); //Gets input from User
+        System.out.println("-Please enter your 6 digit service number-");
+        int service = getInt(inputScanner); //Gets input from User
+
 
         String memberFileLocation = new String();
-        memberFileLocation = "./directories/member_directory";
+        //String providerFileLocation = new String();
 
-        if(obj.isValid(ProviderID, memberFileLocation)) {
+        memberFileLocation = "./directories/member_directory";
+        //providerFileLocation = "./directories/provider_directory";
+
+        /*
+        if(obj.isValid(ProviderID, providerFileLocation)) {
             System.out.println("TRUE");
             return;
         }
+        */
 
-        else {
+        obj.writeReport(providerID, service, memberFileLocation);
+
+        /*else {
             System.out.println("The Provider ID number you have entered is incorrect.");
-            return;
+            return;*/
         }
-        }
+        //}
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
