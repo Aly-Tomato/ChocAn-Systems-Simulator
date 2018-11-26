@@ -1,12 +1,5 @@
 {
-  "memberNumber":"123456789",
-  "MemberName":"Zach Randolph",
-  "zipCode":"44444",
-  "city":"West Linn",
-  "street":"205 Apple Ln",
-  "state":"OR",
-  "Zip":"97233",
-  "dateOfService":"05-15-2018",
-  "providerName":"Kaiser",
-  "serviceName":"Therapy"
-}
+  "123456789":
+  {
+  "zipCode":"97233","city":"Gresham","street":"1020 NE 183rd","name":Kaiser","state":"OR","date":"11-25-2018","dateServProvided":"10-15-2018","memberNumber":"321654987","serviceCode":"654321","comments":"None"
+  }
