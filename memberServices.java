@@ -30,7 +30,7 @@ public class memberServices{
   protected Operator OM = new Operator();
   protected JSONParser parser = new JSONParser();
 
-  protected boolean isValid(int number, String memberFileLocation){
+  protected boolean isValid(int number, String FileLocation){
       //check if member number is appropriate length
      if(number < 100000000 || number > 999999999){
        return false;
@@ -40,11 +40,10 @@ public class memberServices{
      JSONParser parser = new JSONParser();
      try{
          //Object obj = parser.parse(new FileReader("providerDirectory.json"));
-         Object obj = parser.parse(new FileReader(memberFileLocation));
+         Object obj = parser.parse(new FileReader(FileLocation));
          JSONObject providerJSON = (JSONObject) obj;
          JSONObject list = (JSONObject) providerJSON.get(ID);
 
-         System.out.println("Provider ID: " + list);
          return true;
 
      }
@@ -57,31 +56,6 @@ public class memberServices{
      return false;
 
   }
-  /*
-      //Parse file to find member number
-      try{
-        Object obj = parser.parse(new FileReader(memberFileLocation));
-        JSONObject jsonObject = (JSONObject) obj;
-        
-        String member = new String();
-        member = (String)jsonObject.get("memberNumber");
-        int value = Integer.parseInt(member);
-
-        
-        if(value == number) return true;
-      }
-      catch(IOException e){
-        System.out.println("exception err");
-        e.printStackTrace();
-      }
-      catch(ParseException e){
-        System.out.println("parse err");
-        e.printStackTrace();
-      }
-
-      
-      return false;
-      */
 
   protected boolean isSuspended(int number, String memberFileLocation){
       //check if member number is appropriate length
@@ -89,6 +63,28 @@ public class memberServices{
         return false;
       }
 
+     String ID = String.format("%09d", number);
+     JSONParser parser = new JSONParser();
+     try{
+         Object obj = parser.parse(new FileReader(memberFileLocation));
+         JSONObject providerJSON = (JSONObject) obj;
+         JSONObject list = (JSONObject) providerJSON.get(ID);
+
+         String status = (String) list.get("status");
+
+         System.out.println(status);
+
+         return status.equals("Suspended");
+
+     }
+     catch(IOException e){e.printStackTrace();}
+     catch(ParseException e){e.printStackTrace();}
+     catch(Exception e){e.printStackTrace();}
+
+
+     return false;
+  }
+/*
       //Parse file to find member number
       try{
         Object obj = parser.parse(new FileReader(memberFileLocation));
@@ -105,6 +101,7 @@ public class memberServices{
       }
       return false;
   }
+  */
 
   protected boolean writeReport(int provider, int service, String fileLocation)
   {

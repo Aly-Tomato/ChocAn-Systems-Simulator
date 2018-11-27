@@ -54,7 +54,16 @@ public class Subsystem1Main {
           return; 
         }
 
-        
+        rc = obj.isSuspended(memberID, memberFileLocation);
+        if(rc){
+          System.out.println("Member is Suspended. Please refer patient to billing services");
+          return;
+        }
+        else{
+          System.out.println("Member is NOT Suspended. Proceed with services.");
+        }
+
+
 
         obj.writeReport(providerID, service, memberFileLocation);
 
