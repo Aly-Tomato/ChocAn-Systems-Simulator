@@ -120,12 +120,8 @@ public class ChocAnSystem {
 					System.out.println();
 					break;
 				case 4:
-<<<<<<< HEAD
-					//theOperator.addProvider(inputScanner);
-=======
 					theOperator.addProvider(inputScanner);
 					System.out.println();
->>>>>>> a288980761589b5622dcd148f78963bdde6bb3d4
 					break;
 				case 5:
 					theOperator.editProvider(inputScanner);

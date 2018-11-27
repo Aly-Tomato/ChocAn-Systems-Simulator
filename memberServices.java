@@ -98,13 +98,18 @@ public class memberServices{
 		 * 	  "serviceCode" (6 digits; string),
 		 * 		"comments": provider comments(100 characters; string),
 		 * 	}
-		 */
-    DateFormat dateFormat = new SimpleDateFormat("MM-DD-YYYY");
-    Date date = new Date();
-    String filename = new String(provider+"_"+service+"_"+dateFormat.format(date)); 
+		 * 	*/
 
-    try { 
-    File outputFile = new File(filename);
+    if (!(fileLocation.equals(fileLocation)))
+        return false;
+
+    DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+    Date date = new Date();
+    String filename = new String(provider+"_"+service+"_"+dateFormat.format(date));
+      //System.out.println(filename);
+
+    try {
+    File outputFile = new File("./reports/"+filename);
     if(!outputFile.exists()){
       outputFile.createNewFile();
     }
@@ -115,6 +120,6 @@ public class memberServices{
       return false;
     }
     return true;
- }
+  }
 
 }
