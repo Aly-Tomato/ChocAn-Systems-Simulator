@@ -1,9 +1,1 @@
-{
-  "memberNumber":"993392546",
-  "zipCode":"44444",
-  "city":"West Linn",
-  "street":"205 Apple Ln",
-  "name":"Providence",
-  "state":"OR",
-  "status":"Suspended"
-}
+{"993392546":{"zipCode":"44444","city":"West Linn","street":"205 Apple Ln","name":"Providence","state":"OR","status":"Suspended"},"019283845":{"zipCode":"97045","city":"Oregon City","street":"105 McMin St","name":"Kaiser","state":"OR","status":"Valid"}}

@@ -13,10 +13,10 @@ import org.json.simple.JSONValue;
  * The below are good reference tutorials for json-simple:
  * https://www.mkyong.com/java/json-simple-example-read-and-write-json/
  * https://howtodoinjava.com/json/json-simple-read-write-json-examples/
- * 
+ *
  * @author  Group Five: Sawyer Watts, Medina Lamkin, Michelle (Dan-Ting) Kuo, Alyssa Tamayo, Victor Cabunoc, and Alexandra Llamas
  * @version 1.0
- * @since   2018-11-01 
+ * @since   2018-11-01
  */
 public class ChocAnSystem {
 	public static void main(String[] args) {
@@ -40,7 +40,7 @@ public class ChocAnSystem {
 			System.out.println();
 			System.out.print("> ");
 			subsystemToEnter = inputScanner.nextInt();
-			inputScanner.nextLine();
+			inputScanner.nextLine(); // clear the buffer
 
 			switch(subsystemToEnter) {
 				case 0:
@@ -100,7 +100,7 @@ public class ChocAnSystem {
 			System.out.println();
 			System.out.print("> ");
 			routineToRun = inputScanner.nextInt();
-			inputScanner.nextLine();
+			inputScanner.nextLine(); // clear the buffer
 
 			switch(routineToRun) {
 				case 0:
@@ -108,22 +108,32 @@ public class ChocAnSystem {
 					System.out.println();
 					return;
 				case 1:
-					// TODO: add a member functionality
+					theOperator.addMember(inputScanner);
+					System.out.println();
 					break;
 				case 2:
-					// TODO: edit a member funcitonality
+					theOperator.editMember(inputScanner);
+					System.out.println();
 					break;
 				case 3:
-					// TODO: delete a member funcitonality
+					theOperator.deleteMember(inputScanner);
+					System.out.println();
 					break;
 				case 4:
+<<<<<<< HEAD
 					//theOperator.addProvider(inputScanner);
+=======
+					theOperator.addProvider(inputScanner);
+					System.out.println();
+>>>>>>> a288980761589b5622dcd148f78963bdde6bb3d4
 					break;
 				case 5:
-					// TODO: edit a provider funcitonality
+					theOperator.editProvider(inputScanner);
+					System.out.println();
 					break;
 				case 6:
-					// TODO: delete a provider funcitonality
+					theOperator.deleteProvider(inputScanner);
+					System.out.println();
 					break;
 				default:
 					System.out.println("The input of [" + routineToRun + "] is not valid; try again.");

@@ -27,8 +27,6 @@ public class memberServices{
   protected String status;
   protected String comments;
   protected int size = 20;
-  //protected int [] memDirectory = new int[size];
-  //protected ChocAnSystem CAS = new ChocAnSystem();
   protected OperatorMode OM = new OperatorMode();
   protected JSONParser parser = new JSONParser();
   //protected JSONObject serviceReport = new JSONObject();
