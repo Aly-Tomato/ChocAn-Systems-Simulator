@@ -1,4 +1,4 @@
-//Class declaration for memberServices
+//Class declaration for MemberServices
 //sub-architecture 1
 //allows the provider to add services provided to member for billing
 
@@ -18,7 +18,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 
-public class memberServices{
+public class MemberServices{
 
   
   //data fields
