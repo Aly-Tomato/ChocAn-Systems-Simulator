@@ -85,7 +85,8 @@ public class ChocAnSystem {
 	private static void runSubsystem3(Scanner inputScanner) {
 		System.out.println("Loading: Operator Mode");
 		int routineToRun;
-		OperatorMode theOperator = new OperatorMode();
+		//OperatorMode theOperator = new OperatorMode();
+		Operator theOperator = new Operator();
 
 		while(true) {
 			System.out.println("What routine would you like to use? (Please enter the arabic routine number)");

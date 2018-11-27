@@ -14,9 +14,13 @@ public class Subsystem1Main {
 
     public static void main(Scanner inputScanner) {
         memberServices obj = new memberServices();
-        //int ProviderID;
 
-
+        String memberFileLocation = new String();
+        String providerFileLocation = new String();
+        memberFileLocation = "./directories/member_directory";
+        providerFileLocation = "./directories/provider_directory";
+        
+        //Begin Prompts
         System.out.println("\n\nHello Provider,");
         System.out.println("-Please enter your 9 digit provider number-");
         System.out.println("ID Number: ");
@@ -24,19 +28,33 @@ public class Subsystem1Main {
         System.out.println("-Please enter your 6 digit service number-");
         int service = getInt(inputScanner); //Gets input from User
 
-
-        String memberFileLocation = new String();
-        //String providerFileLocation = new String();
-
-        memberFileLocation = "./directories/member_directory";
-        //providerFileLocation = "./directories/provider_directory";
-
-        /*
-        if(obj.isValid(ProviderID, providerFileLocation)) {
-            System.out.println("TRUE");
-            return;
+        //validates provider login
+        boolean rc = obj.isValid(providerID, memberFileLocation);
+        if(rc){
+          System.out.println("Provider Number is VALID");
         }
-        */
+        else{
+          System.out.println("Provider Number is INVALID. Goodbye");
+          return; 
+        }
+        
+
+        //member validation
+        System.out.println("-Please enter the 9 digit member number-");
+        System.out.println("ID Number: ");
+        int memberID = getInt(inputScanner); //Gets input from User
+
+        //validates member login
+        rc = obj.isValid(memberID, memberFileLocation);
+        if(rc){
+          System.out.println("Provider Number is VALID");
+        }
+        else{
+          System.out.println("Provider Number is INVALID. Goodbye");
+          return; 
+        }
+
+        
 
         obj.writeReport(providerID, service, memberFileLocation);
 

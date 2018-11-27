@@ -1,13 +1,1 @@
-<<<<<<< HEAD
 {"993392546":{"zipCode":"44444","city":"West Linn","street":"205 Apple Ln","name":"Providence","state":"OR","status":"Suspended"},"019283845":{"zipCode":"97045","city":"Oregon City","street":"105 McMin St","name":"Kaiser","state":"OR","status":"Valid"}}
-=======
-{
-  "memberNumber":"123456789",
-  "zipCode":"44444",
-  "city":"West Linn",
-  "street":"205 Apple Ln",
-  "name":"Providence",
-  "state":"OR",
-  "status":"Suspended"
-}
->>>>>>> fd5e21852b28775ab7f2b2c6cd4480de4e57d25d

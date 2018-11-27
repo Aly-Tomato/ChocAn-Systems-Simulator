@@ -27,16 +27,37 @@ public class memberServices{
   protected String status;
   protected String comments;
   protected int size = 20;
-  protected OperatorMode OM = new OperatorMode();
+  protected Operator OM = new Operator();
   protected JSONParser parser = new JSONParser();
-  //protected JSONObject serviceReport = new JSONObject();
 
   protected boolean isValid(int number, String memberFileLocation){
       //check if member number is appropriate length
-      if(number < 100000000 || number > 999999999){
-        return false;
-      }
+     if(number < 100000000 || number > 999999999){
+       return false;
+     }
 
+     String ID = String.format("%09d", number);
+     JSONParser parser = new JSONParser();
+     try{
+         //Object obj = parser.parse(new FileReader("providerDirectory.json"));
+         Object obj = parser.parse(new FileReader(memberFileLocation));
+         JSONObject providerJSON = (JSONObject) obj;
+         JSONObject list = (JSONObject) providerJSON.get(ID);
+
+         System.out.println("Provider ID: " + list);
+         return true;
+
+     }
+     //catch(FileNotFoundException e){e.printStackTrace();}
+     catch(IOException e){e.printStackTrace();}
+     catch(ParseException e){e.printStackTrace();}
+     catch(Exception e){e.printStackTrace();}
+
+
+     return false;
+
+  }
+  /*
       //Parse file to find member number
       try{
         Object obj = parser.parse(new FileReader(memberFileLocation));
@@ -60,7 +81,7 @@ public class memberServices{
 
       
       return false;
-}
+      */
 
   protected boolean isSuspended(int number, String memberFileLocation){
       //check if member number is appropriate length
@@ -83,43 +104,43 @@ public class memberServices{
         e.printStackTrace();
       }
       return false;
-    }
+  }
 
   protected boolean writeReport(int provider, int service, String fileLocation)
   {
-		/* General Json Structure for provider_report 
-		 * 
-		 * {
+    /* General Json Structure for provider_report 
+     * 
+     * {
      *  "date" (MM-DD-YYYY):{
-		 * 	  "time" (HH:MM:SS), 
-		 * 	  "dateServProvided" (MM-DD-YYYY), 
-		 * 		"providerNumber": (9digits;string),
-		 * 	  "memberNumber" (9 digits; string),
-		 * 	  "serviceCode" (6 digits; string),
-		 * 		"comments": provider comments(100 characters; string),
-		 * 	}
-		 * 	*/
+     * 	  "time" (HH:MM:SS), 
+     * 	  "dateServProvided" (MM-DD-YYYY), 
+     * 		"providerNumber": (9digits;string),
+     * 	  "memberNumber" (9 digits; string),
+     * 	  "serviceCode" (6 digits; string),
+     * 		"comments": provider comments(100 characters; string),
+     * 	}
+     * 	*/
 
-    if (!(fileLocation.equals(fileLocation)))
+      if (!(fileLocation.equals(fileLocation)))
+          return false;
+
+      DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+      Date date = new Date();
+      String filename = new String(provider+"_"+service+"_"+dateFormat.format(date));
+        //System.out.println(filename);
+
+      try {
+      File outputFile = new File("./reports/"+filename);
+      if(!outputFile.exists()){
+        outputFile.createNewFile();
+      }
+      BufferedWriter outputFileWriter = new BufferedWriter(new FileWriter(outputFile));
+
+      } catch (IOException e) {
+        e.printStackTrace();
         return false;
-
-    DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
-    Date date = new Date();
-    String filename = new String(provider+"_"+service+"_"+dateFormat.format(date));
-      //System.out.println(filename);
-
-    try {
-    File outputFile = new File("./reports/"+filename);
-    if(!outputFile.exists()){
-      outputFile.createNewFile();
-    }
-    BufferedWriter outputFileWriter = new BufferedWriter(new FileWriter(outputFile));
-
-    } catch (IOException e) {
-      e.printStackTrace();
-      return false;
-    }
-    return true;
+      }
+      return true;
   }
 
 }
