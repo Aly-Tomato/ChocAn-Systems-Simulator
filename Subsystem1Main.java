@@ -21,74 +21,94 @@ public class Subsystem1Main {
         memberServices obj = new memberServices();
         int providerID;
         int serviceID;
-        boolean rc; //return code
         int memberID;
+        boolean rc; //return code
+        int response; //user responds 1 for yes, 2 for no
         String comments;
-        DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
-        Date date = new Date();
-        
 
         String memberFileLocation = new String();
         String providerFileLocation = new String();
         memberFileLocation = "./directories/member_directory";
         providerFileLocation = "./directories/provider_directory";
-        
-        //Begin Prompts
-        System.out.println("\n\nHello Provider,");
-        System.out.println("-Please enter your 9 digit provider number-");
-        System.out.println("ID Number: ");
+
+
+
+            
+        //Provider Sign In
+        System.out.println("\n****************************");
+        System.out.println("**Welcome Provider**");
+        System.out.println("****************************\n\n");
+
+        System.out.println("**Please enter your 9 digit provider number\n");
+        System.out.print("Provider Number: ");
         providerID = getInt(inputScanner); //Gets input from User
-        System.out.println("-Please enter your 6 digit service number-");
-        serviceID = getInt(inputScanner); //Gets input from User
 
         //validates provider login
         rc = obj.isValid(providerID, memberFileLocation);
         if(rc){
-          System.out.println("Provider Number is VALID");
+          System.out.println("\n****************************");
+          System.out.println("**Provider Number is VALID**");
+          System.out.println("****************************\n");
         }
         else{
-          System.out.println("Provider Number is INVALID. Goodbye");
+          System.out.println("\nError, Provider Number is INVALID. Goodbye\n");
           return; 
         }
 
-        //member validation
-        System.out.println("-Please enter the 9 digit member number-");
-        System.out.println("ID Number: ");
-        memberID = getInt(inputScanner); //Gets input from User
+        do{    
+            //get updated date for report
+            DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+            Date date = new Date();
 
-        //validates member login
-        rc = obj.isValid(memberID, memberFileLocation);
-        if(rc){
-          System.out.println("Provider Number is VALID");
-        }
-        else{
-          System.out.println("Provider Number is INVALID. Goodbye");
-          return; 
-        }
+            //member validation & Service Number
+            System.out.println("**Please enter your 6 digit service number\n");
+            System.out.print("Service Number: ");
+            serviceID = getInt(inputScanner); //Gets input from User
+            System.out.println("\n**Please enter the 9 digit member number\n");
+            System.out.print("Member Number: ");
+            memberID = getInt(inputScanner); //Gets input from User
 
-        //check if member is supended
-        rc = obj.isSuspended(memberID, memberFileLocation);
-        if(rc){
-          System.out.println("Member is Suspended. Please refer patient to billing services");
-          return;
-        }
-        else{
-          System.out.println("Member is NOT Suspended. Proceed with services.");
-        }
+            //validates member login
+            rc = obj.isValid(memberID, memberFileLocation);
+            if(rc){
+              System.out.println("\n****************************");
+              System.out.println("**Member Number is VALID**");
+              System.out.println("****************************\n");
+            }
+            else{
+              System.out.println("\nError, Provider Number is INVALID. Goodbye\n");
+              return; 
+            }
 
-        //provider enters comments about visit with member
-        System.out.println("\n\nWould you like to write comments about this visit?\n1 - yes\n2 - no\n");
-        int response = getInt(inputScanner);
-        if(response == 1){
-          System.out.println("\nPlease type your comments: \n");
-          comments = new String();
-        }
-        else{
-          System.out.println("\nYou answered no.\n");
-        }
-        
+            //check if member is supended
+            rc = obj.isSuspended(memberID, memberFileLocation);
+            if(rc){
+              System.out.println("\n**Member is Suspended. Please refer patient to billing services**\n");
+              return;
+            }
+            else{
+              System.out.println("\n**Member is NOT Suspended. Proceed with services.**\n");
+            }
 
-        obj.writeReport(providerID, serviceID, memberFileLocation);
+            //provider enters comments about visit with member
+            System.out.println("\n**Would you like to write comments about this visit?\n1 - yes\n2 - no\n");
+            response = getInt(inputScanner);
+            if(response == 1){
+              System.out.println("\nPlease type your comments: ");
+              comments = new String();
+              comments = getString(inputScanner);
+            }
+            else{
+              System.out.println("\nYou answered no.\n");
+            }
+           
+            //Write new data to Provider Report
+            obj.writeReport(providerID, serviceID, memberFileLocation);
+
+            System.out.println("**Would you like to add another visit?\n1 - yes\n2 - no\n");
+            response = getInt(inputScanner);
+
+        }while(response == 1);
 
         /*else {
             System.out.println("The Provider ID number you have entered is incorrect.");

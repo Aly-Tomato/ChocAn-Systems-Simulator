@@ -71,9 +71,7 @@ public class MemberServices{
          JSONObject list = (JSONObject) providerJSON.get(ID);
 
          String status = (String) list.get("status");
-
          System.out.println(status);
-
          return status.equals("Suspended");
 
      }
@@ -84,24 +82,6 @@ public class MemberServices{
 
      return false;
   }
-/*
-      //Parse file to find member number
-      try{
-        Object obj = parser.parse(new FileReader(memberFileLocation));
-        JSONObject jsonObject = (JSONObject) obj;
-        status = new String();
-        status = (String)jsonObject.get("Status");
-        if(status == "Suspended") return true;
-      }
-      catch(IOException e){
-        e.printStackTrace();
-      }
-      catch(ParseException e){
-        e.printStackTrace();
-      }
-      return false;
-  }
-  */
 
   protected boolean writeReport(int provider, int service, String fileLocation)
   {
