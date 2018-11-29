@@ -86,39 +86,39 @@ protected boolean isSuspended(int number, String memberFileLocation){
       }
       return false;
     }
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-protected JSONObject buildProviderFile(int provider, int member, int service, String date) {
-    JSONObject providerkey = new JSONObject();
-
-    providerkey.put(provider,buildProviderFile2(member,service,date));
-
-    return providerkey;
-}
-
-protected JSONObject buildProviderFile2(int memberID, int serviceID, String date) { //Creates inner object (DATE as key)
+protected JSONObject buildObject(int providerID, int memberID, int serviceID, String date, String comment) {
     JSONObject datekey = new JSONObject();
+    JSONObject inner = new JSONObject();
 
-    datekey.put(date,buildProviderFile3(memberID, serviceID));
-
+    inner = buildInner(memberID, serviceID, comment, date);
+    datekey.put(date,inner);
+    System.out.println();
+    System.out.println(datekey);
+    System.out.println();
+    String providerFile = createFile();
+    createKey(providerFile, providerID, date, datekey, inner); //Checks to see if a key exists
     return datekey;
+
 }
 
-protected JSONObject buildProviderFile3(int memberID, int serviceID) { //Creates inner inner object (actual information)
+protected JSONObject buildInner(int memberID, int serviceID, String comment, String date) {
     JSONObject data = new JSONObject();
 
-    data.put("Member Number:", memberID); //HERE YOU WILL BE INPUTTING THE JSON OBJECT TO ADD (the required info)
-    data.put("Service code:", serviceID); //HERE YOU WILL BE INPUTTING THE JSON OBJECT TO ADD (the required info)
+    data.put("MemberID:", memberID); //HERE YOU WILL BE INPUTTING THE JSON OBJECT TO ADD (the required info)
+    data.put("ServiceID:", serviceID); //HERE YOU WILL BE INPUTTING THE JSON OBJECT TO ADD (the required info)
+    data.put("Comment", comment); //HERE YOU WILL BE INPUTTING THE JSON OBJECT TO ADD (the required info)
 
     return data;
 }
 
-protected boolean createFile(int provider, int member, int service, String fileLocation, JSONObject object) {
-    if (!(fileLocation.equals(fileLocation)))
-        return false;
+protected String createFile() {
 
     DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
     Date date = new Date();
     String currentDate = new String(dateFormat.format(date));
+
     String providerFile = "./reports/"+currentDate;
 
     try {
@@ -127,44 +127,54 @@ protected boolean createFile(int provider, int member, int service, String fileL
 
         if (!outputFile.exists()) {
             outputFile.createNewFile();
+            return providerFile;
         }
 
-        String ID = String.format("%09d", provider);
-        if (keyExists(providerFile, ID)) {
-            System.out.println("go fuck yourself");
-
-        /*JSONObject key = new JSONObject(); //The key JSONObject is created
-        JSONObject var = obj.returnSub(providerID, providerFile); //Get the inner part of the JSON file
-        key.put(providerID,var); //Add in the stuff you want to add (still has to be another function)
-        obj.writeToFile("./reports/"+date, key); //Write it to the file*/
-        }
-
-        else {
-            //BufferedWriter outputFileWriter = new BufferedWriter(new FileWriter(outputFile, true));
-            //outputFileWriter.write(JSONValue.toJSONString(object));
-            //outputFileWriter.close();
-            JSONObject file = new JSONObject();
-            file.put(provider,buildProviderFile(provider, member, service, currentDate));
-            writeToFile(providerFile, file); //Write it to the file
-            return true;
-        }
     }
         catch(FileNotFoundException e){e.printStackTrace();}
         catch(IOException e){e.printStackTrace();}
         catch(Exception e){e.printStackTrace();}
-        return false;
-    }
+        return providerFile;
+}
 
+protected boolean createKey(String file, int providerID, String date, JSONObject dateKey, JSONObject inner) { //Checks to see if a key exists
+    String key = String.format("%09d", providerID);
 
-protected boolean keyExists(String file, String key) { //Checks to see if a key exists
     try{
-        FileReader reader = new FileReader(file);
-        JSONObject object = (JSONObject) parser.parse(reader);
 
-        if (object.containsKey(key))
-            return true;
-        else
+        BufferedReader br = new BufferedReader(new FileReader(file));
+
+        if (br.readLine() == null) { //IF FILE IS EMPTY, CREATE NEW PROV KEY
+            //System.out.println("No errors, and file empty");
+            JSONObject object = new JSONObject();
+            object.put(key, dateKey);
+            writeToFile(file, object);
+
             return false;
+        }
+
+        else {
+
+            FileReader reader = new FileReader(file);
+            JSONObject object = (JSONObject) parser.parse(reader);
+
+            if (object.containsKey(key)) {
+
+                //FileReader reader2 = new FileReader(file);
+                //JSONObject provider = (JSONObject) parser.parse(reader2);
+                //int value = Integer.parseInt(key);
+                dateKey.put(date, inner);
+                writeToFile(file, object);
+                return true;
+            }
+            else { //IF THE PROV KEY ISN'T FOUND, ADD IN A NEW PROV KEY
+                object.put(key, dateKey);
+                writeToFile(file, object);
+
+                return false;
+            }
+        }
+
     }
     catch(FileNotFoundException e){e.printStackTrace();}
     catch(IOException e){e.printStackTrace();}
@@ -173,6 +183,23 @@ protected boolean keyExists(String file, String key) { //Checks to see if a key 
     return false;
 }
 
+protected boolean writeToFile(String fileLocation, JSONObject newDirectory) {
+    try {
+        //if (!directoryValidation(fileLocation))
+            //return false;
+        File outputFile = new File(fileLocation);
+        BufferedWriter outputFileWriter = new BufferedWriter(new FileWriter(outputFile));
+
+        outputFileWriter.write(JSONValue.toJSONString(newDirectory));
+        outputFileWriter.close();
+
+    } catch (IOException error) {
+        error.printStackTrace();
+        return false;
+    }
+
+    return true;
+}
 public JSONObject returnKey(int number, String providerFileLocation) {
 
     String ID = String.format ("%09d", number);
@@ -254,23 +281,7 @@ public void read(int number, String providerFileLocation) {
     catch(Exception e){e.printStackTrace();}
 }
 
-protected boolean writeToFile(String fileLocation, JSONObject newDirectory) {
-    try {
-        //if (!directoryValidation(fileLocation))
-            //return false;
-        File outputFile = new File(fileLocation);
-        BufferedWriter outputFileWriter = new BufferedWriter(new FileWriter(outputFile,true));
 
-        outputFileWriter.write(JSONValue.toJSONString(newDirectory));
-        outputFileWriter.close();
-
-    } catch (IOException error) {
-        error.printStackTrace();
-        return false;
-    }
-
-    return true;
-}
 
 }
 
@@ -313,3 +324,30 @@ protected boolean writeToFile(String fileLocation, JSONObject newDirectory) {
  	  "Service name":"Spa",
  	}
  }*/
+
+/*protected boolean createFile(int provider, int member, int service, String fileLocation, JSONObject object) {
+    if (!(fileLocation.equals(fileLocation)))
+        return false;
+
+    DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+    Date date = new Date();
+    String currentDate = new String(dateFormat.format(date));
+    String providerFile = "./reports/"+currentDate;
+
+    try {
+
+        File outputFile = new File(providerFile);
+
+        if (!outputFile.exists()) {
+            outputFile.createNewFile();
+        }
+
+        String ID = String.format("%09d", provider);
+        if (keyExists(providerFile, ID)) {
+            System.out.println("go fuck yourself");
+
+        /*JSONObject key = new JSONObject(); //The key JSONObject is created
+        JSONObject var = obj.returnSub(providerID, providerFile); //Get the inner part of the JSON file
+        key.put(providerID,var); //Add in the stuff you want to add (still has to be another function)
+        obj.writeToFile("./reports/"+date, key); //Write it to the file
+        }*/

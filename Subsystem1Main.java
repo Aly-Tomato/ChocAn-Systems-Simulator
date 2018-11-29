@@ -25,7 +25,7 @@ public class Subsystem1Main {
 
         System.out.println("-Please enter your 9 digit PROVIDER number-");
         System.out.println("ID Number: ");
-        int providerID = 999999111;//getInt(inputScanner); //Gets input from User
+        int providerID = 123456789;//getInt(inputScanner); //Gets input from User
 
         System.out.println("-Please enter your 9 digit MEMBER number-");
         System.out.println("ID Number: ");
@@ -35,16 +35,23 @@ public class Subsystem1Main {
         int serviceID = 666666;//getInt(inputScanner); //Gets input from User
 
         System.out.println("-Please enter the date of service-");
-        String date = "11-26-2018";//getString(inputScanner); //Gets input from User
+        String date = "11-30-2018";//getString(inputScanner); //Gets input from User
+
+        System.out.println("-Comment-");
+        String comment  = "Here is my comment";//getString(inputScanner); //Gets input from User
 
         String memberFileLocation = new String();
         String providerFileLocation = new String();
+
         memberFileLocation = "./directories/member_directory";
         providerFileLocation = "./directories/provider_directory";
 
-        JSONObject data; //creates new JSONObject
+        JSONObject key = new JSONObject(); //maybe remove
+        key = obj.buildObject(providerID, memberID, serviceID, date, comment);
+
+        //JSONObject data; //creates new JSONObject
         //data = obj.buildProviderFile(providerID, memberID, serviceID, date); //Creates JSONObject and stores into data
-        obj.createFile(providerID, memberID, serviceID, providerFileLocation, data);
+        //obj.createFile(providerID, memberID, serviceID, providerFileLocation, data);
         //System.out.println(data);
 
         //obj.read(providerID, "./reports/"+date);
