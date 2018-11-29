@@ -25,17 +25,17 @@ public class Subsystem1Main {
 
         System.out.println("-Please enter your 9 digit PROVIDER number-");
         System.out.println("ID Number: ");
-        int providerID = 0000000000;//getInt(inputScanner); //Gets input from User
+        int providerID = 999999999;//getInt(inputScanner); //Gets input from User
 
         System.out.println("-Please enter your 9 digit MEMBER number-");
         System.out.println("ID Number: ");
-        int memberID = 111111111;//getInt(inputScanner); //Gets input from User
+        int memberID = 000000000;//getInt(inputScanner); //Gets input from User
 
         System.out.println("-Please enter your 6 digit service number-");
-        int serviceID = 666666;//getInt(inputScanner); //Gets input from User
+        int serviceID = 000000;//getInt(inputScanner); //Gets input from User
 
         System.out.println("-Please enter the date of service-");
-        String date = "11-01-2018";//getString(inputScanner); //Gets input from User
+        String date = "12-31-2018";//getString(inputScanner); //Gets input from User
 
         System.out.println("-Comment-");
         String comment  = "Here is my comment";//getString(inputScanner); //Gets input from User

@@ -92,7 +92,7 @@ protected JSONObject buildObject(int providerID, int memberID, int serviceID, St
     JSONObject datekey = new JSONObject();
     JSONObject inner = new JSONObject();
 
-    inner = buildInner(memberID, serviceID, comment, date);
+    inner = buildInner(memberID, providerID, serviceID, comment, date);
     datekey.put(date,inner);
     System.out.println();
     System.out.println(datekey);
@@ -105,13 +105,58 @@ protected JSONObject buildObject(int providerID, int memberID, int serviceID, St
 
 }
 
-protected JSONObject buildInner(int memberID, int serviceID, String comment, String date) {
+protected JSONObject buildInner(int memberID, int providerID, int serviceID, String comment, String date) {
     JSONObject data = new JSONObject();
+    String ID1 = String.format ("%09d", memberID);
+    String ID2 = String.format ("%09d", providerID);
+    String ID3 = String.format ("%06d", serviceID);
 
-    data.put("MemberID:", memberID); //HERE YOU WILL BE INPUTTING THE JSON OBJECT TO ADD (the required info)
-    data.put("ServiceID:", serviceID); //HERE YOU WILL BE INPUTTING THE JSON OBJECT TO ADD (the required info)
-    data.put("Comment", comment); //HERE YOU WILL BE INPUTTING THE JSON OBJECT TO ADD (the required info)
+    /*System.out.println(ID1);
+    System.out.println(ID2);
+    System.out.println(ID3);*/
 
+    try{
+
+        Object obj1 = parser.parse(new FileReader("./directories/member_directory"));
+        Object obj2 = parser.parse(new FileReader("./directories/provider_directory"));
+
+        JSONObject memberdirectory = (JSONObject) obj1;
+        JSONObject providerdirectory = (JSONObject) obj2;
+
+
+        JSONObject memberfile = (JSONObject) memberdirectory.get(ID1);
+        JSONObject providerfile = (JSONObject) providerdirectory.get(ID2);
+
+        JSONObject services = (JSONObject) providerfile.get("serviceNumbers") ;
+        JSONObject serviceInfo = (JSONObject) services.get(ID3) ;
+
+        System.out.println("Service info:");
+        //System.out.println(serviceInfo);
+
+        String serviceName  = (String) serviceInfo.get("name");
+        double serviceFee  = (double) serviceInfo.get("fee");
+
+        //System.out.println(serviceName);
+        //System.out.println(serviceFee);
+
+        //JSONObject services = (JSONObject) memberdirectory.get(
+
+        System.out.println();
+
+        String memberName = (String) memberfile.get("name");
+
+        data.put("MemberID:", ID1); //HERE YOU WILL BE INPUTTING THE JSON OBJECT TO ADD (the required info)
+        data.put("MemberName:", memberName); //HERE YOU WILL BE INPUTTING THE JSON OBJECT TO ADD (the required info)
+        data.put("ServiceID:", ID2); //HERE YOU WILL BE INPUTTING THE JSON OBJECT TO ADD (the required info)
+        data.put("ServiceName:", serviceName); //HERE YOU WILL BE INPUTTING THE JSON OBJECT TO ADD (the required info)
+        data.put("SeviceFee:", serviceFee); //HERE YOU WILL BE INPUTTING THE JSON OBJECT TO ADD (the required info)
+        data.put("Comment", comment); //HERE YOU WILL BE INPUTTING THE JSON OBJECT TO ADD (the required info)
+        return data;
+    }
+    catch(FileNotFoundException e){e.printStackTrace();}
+    catch(IOException e){e.printStackTrace();}
+    catch(ParseException e){e.printStackTrace();}
+    catch(Exception e){e.printStackTrace();}
     return data;
 }
 
@@ -352,7 +397,7 @@ public void read(int number, String providerFileLocation) {
 
         String ID = String.format("%09d", provider);
         if (keyExists(providerFile, ID)) {
-            System.out.println("go fuck yourself");
+            System.out.println("go");
 
         /*JSONObject key = new JSONObject(); //The key JSONObject is created
         JSONObject var = obj.returnSub(providerID, providerFile); //Get the inner part of the JSON file
