@@ -10,12 +10,16 @@ import java.io.IOException;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import java.io.FileReader;
+import java.io.FileNotFoundException;
+
 public class Subsystem1Main {
 
     public static void main(Scanner inputScanner) {
         memberServices obj = new memberServices();
         //int ProviderID;
-
 
         System.out.println("\n\nHello Provider,");
 
@@ -28,7 +32,7 @@ public class Subsystem1Main {
         int memberID = 111111111;//getInt(inputScanner); //Gets input from User
 
         System.out.println("-Please enter your 6 digit service number-");
-        int service = 666666;//getInt(inputScanner); //Gets input from User
+        int serviceID = 666666;//getInt(inputScanner); //Gets input from User
 
         System.out.println("-Please enter the date of service-");
         String date = "11-26-2018";//getString(inputScanner); //Gets input from User
@@ -38,16 +42,17 @@ public class Subsystem1Main {
         memberFileLocation = "./directories/member_directory";
         providerFileLocation = "./directories/provider_directory";
 
-        /*JSONObject data;
-        data = obj.buildProviderFile(providerID, memberID, service, date);
-        obj.createFile(providerID, service, providerFileLocation, data);*/
+        JSONObject data; //creates new JSONObject
+        //data = obj.buildProviderFile(providerID, memberID, serviceID, date); //Creates JSONObject and stores into data
+        obj.createFile(providerID, memberID, serviceID, providerFileLocation, data);
+        //System.out.println(data);
 
         //obj.read(providerID, "./reports/"+date);
-        JSONObject key = new JSONObject();
-        JSONObject var = obj.returnSub(providerID, "./reports/"+date);
-        key.put(providerID,var);
 
-        obj.writeToFile("./reports/"+date, key);
+        /*JSONObject key = new JSONObject(); //The key JSONObject is created
+        JSONObject var = obj.returnSub(providerID, "./reports/"+date); //Get the inner part of the JSON file
+        key.put(providerID,var); //Add in the stuff you want to add (still has to be another function)
+        obj.writeToFile("./reports/"+date, key); //Write it to the file*/
 
         }
         //}
