@@ -98,8 +98,10 @@ protected JSONObject buildObject(int providerID, int memberID, int serviceID, St
     System.out.println(datekey);
     System.out.println();
     String providerFile = createFile();
-    createKey(providerFile, providerID, date, datekey, inner); //Checks to see if a key exists
-    return datekey;
+    JSONObject object = new JSONObject();
+    object = createKey(providerFile, providerID, date, datekey, inner);
+    writeToFile(providerFile, object);
+    return object;
 
 }
 
@@ -137,7 +139,7 @@ protected String createFile() {
         return providerFile;
 }
 
-protected boolean createKey(String file, int providerID, String date, JSONObject dateKey, JSONObject inner) { //Checks to see if a key exists
+protected JSONObject createKey(String file, int providerID, String date, JSONObject dateKey, JSONObject inner) { //Checks to see if a key exists
     String key = String.format("%09d", providerID);
 
     try{
@@ -148,15 +150,16 @@ protected boolean createKey(String file, int providerID, String date, JSONObject
             //System.out.println("No errors, and file empty");
             JSONObject object = new JSONObject();
             object.put(key, dateKey);
-            writeToFile(file, object);
+            //writeToFile(file, object);
 
-            return false;
+            return object;
         }
 
         else {
 
             FileReader reader = new FileReader(file);
             JSONObject object = (JSONObject) parser.parse(reader);
+            //System.out.println(object);
 
             if (object.containsKey(key)) {
 
@@ -164,14 +167,19 @@ protected boolean createKey(String file, int providerID, String date, JSONObject
                 //JSONObject provider = (JSONObject) parser.parse(reader2);
                 //int value = Integer.parseInt(key);
                 dateKey.put(date, inner);
-                writeToFile(file, object);
-                return true;
+
+                JSONObject prov = (JSONObject) object.get(key);
+
+                prov.put(date,inner);
+                System.out.println(object);
+                //writeToFile(file, object);
+                return object;
             }
             else { //IF THE PROV KEY ISN'T FOUND, ADD IN A NEW PROV KEY
                 object.put(key, dateKey);
-                writeToFile(file, object);
+                //writeToFile(file, object);
 
-                return false;
+                return object;
             }
         }
 
@@ -180,7 +188,7 @@ protected boolean createKey(String file, int providerID, String date, JSONObject
     catch(IOException e){e.printStackTrace();}
     catch(ParseException e){e.printStackTrace();}
     catch(Exception e){e.printStackTrace();}
-    return false;
+    return null;
 }
 
 protected boolean writeToFile(String fileLocation, JSONObject newDirectory) {

@@ -25,7 +25,7 @@ public class Subsystem1Main {
 
         System.out.println("-Please enter your 9 digit PROVIDER number-");
         System.out.println("ID Number: ");
-        int providerID = 123456789;//getInt(inputScanner); //Gets input from User
+        int providerID = 0000000000;//getInt(inputScanner); //Gets input from User
 
         System.out.println("-Please enter your 9 digit MEMBER number-");
         System.out.println("ID Number: ");
@@ -35,7 +35,7 @@ public class Subsystem1Main {
         int serviceID = 666666;//getInt(inputScanner); //Gets input from User
 
         System.out.println("-Please enter the date of service-");
-        String date = "11-30-2018";//getString(inputScanner); //Gets input from User
+        String date = "11-01-2018";//getString(inputScanner); //Gets input from User
 
         System.out.println("-Comment-");
         String comment  = "Here is my comment";//getString(inputScanner); //Gets input from User
