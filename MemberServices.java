@@ -23,15 +23,9 @@ public class MemberServices {
 
     //data fields
     protected int provider; //9-digit provider#
-    //protected int member;  // 9-digit provider#
     protected String status;
     protected String comments;
     protected int size = 20;
-    //protected int [] memDirectory = new int[size];
-//protected ChocAnSystem CAS = new ChocAnSystem();
-    //protected OperatorMode OM = new OperatorMode();
-    //protected JSONParser parser = new JSONParser();
-//protected JSONObject serviceReport = new JSONObject();
 
     protected boolean isValid(int number, String FileLocation) {
         //check if member number is appropriate length
@@ -119,6 +113,7 @@ public class MemberServices {
         String ID3 = String.format("%06d", serviceID);
 
         try {
+            JSONParser parser = new JSONParser();
             Object obj1 = parser.parse(new FileReader("./services/member_services"));
             Object obj2 = parser.parse(new FileReader("./services/provider_services"));
 
@@ -187,6 +182,7 @@ public class MemberServices {
                 return object;
             } else { //not empty
 
+                JSONParser parser = new JSONParser();
                 FileReader reader = new FileReader(memberFile);
                 JSONObject object = (JSONObject) parser.parse(reader);
 
@@ -262,6 +258,7 @@ public class MemberServices {
                 return object;
             } else {
 
+                JSONParser parser = new JSONParser();
                 FileReader reader = new FileReader(providerFile);
                 JSONObject object = (JSONObject) parser.parse(reader);
 

@@ -78,8 +78,137 @@ public class ChocAnSystem {
 
 	private static void runSubsystem2(Scanner inputScanner) {
 		System.out.println("Loading: Report Generator");
-		// TODO: put the caller code here
+
+		int action = 0;                 //finds out the credentials of user
+		int actionReport = 0;           //finds out report user wants to run
+		int number = 0;                 //ID number
+
+
+		System.out.println("\nChoose your credentials:");
+		System.out.println("1. Member");
+		System.out.println("2. Provider");
+		System.out.println("3. Manager");
+
+		System.out.print("\nEntry: ");
+
+		action = inputScanner.nextInt();
+		inputScanner.nextLine();
+		inputScanner.reset();
+
+		switch (action) {
+
+		    //user is a member
+			case 1:
+				System.out.println("\nPlease enter the members ID number...");
+
+				number = inputScanner.nextInt();
+				inputScanner.reset();
+
+				MemberReport memberReport = new MemberReport();
+
+                memberReport.read(number);
+				break;
+
+            //user is a provider
+			case 2:
+				System.out.println("\nChoose a report to generate:");
+				System.out.println("1. Provider report (providerReports)");
+				System.out.println("2. Weekly fee calculation report (providerReports)");
+
+				actionReport = inputScanner.nextInt();
+				inputScanner.nextLine();
+				inputScanner.reset();
+
+				System.out.println("\nPlease enter the providers ID number...");
+
+				number = inputScanner.nextInt();
+				inputScanner.reset();
+
+				switch (actionReport) {
+					case 0:
+						return;
+
+					case 1:
+                        ProviderReport providerReport = new ProviderReport();
+
+                        providerReport.read(number);
+                        break;
+
+					case 2:
+
+                        WeeklyFeeReport weeklyFeeReport = new WeeklyFeeReport();
+                        weeklyFeeReport.read(number);
+                        break;
+
+				}
+
+				break;
+
+            //user is a manager
+			case 3:
+				System.out.println("\nChoose a report to generate:");
+				System.out.println("1. Member report (memberReports)");
+				System.out.println("2. Provider report (providerReports)");
+				System.out.println("3. Weekly fee calculation report (providerReports)");
+				System.out.println("4. Accounts payable summary report (managerReports)");
+
+				System.out.print("\nEntry: ");
+
+				actionReport = inputScanner.nextInt();
+				inputScanner.nextLine();
+				inputScanner.reset();
+
+				switch (actionReport) {
+					case 0:
+						return;
+
+					case 1:
+                        System.out.println("\nPlease enter the members ID number...");
+
+                        number = inputScanner.nextInt();
+                        inputScanner.reset();
+
+                        MemberReport memberReportM = new MemberReport();
+
+                        memberReportM.read(number);
+                        break;
+
+					case 2:
+                        System.out.println("\nPlease enter the providers ID number...");
+
+                        number = inputScanner.nextInt();
+                        inputScanner.reset();
+
+                        ProviderReport providerReportM = new ProviderReport();
+
+                        providerReportM.read(number);
+                        break;
+
+
+					case 3:
+
+						System.out.println("\nPlease enter the providers ID number...");
+
+						number = inputScanner.nextInt();
+						inputScanner.reset();
+
+					    WeeklyFeeReport weeklyFeeReportM = new WeeklyFeeReport();
+					    weeklyFeeReportM.read(number);
+						break;
+
+					case 4:
+
+                        AccountsPayableReport accountsPayableReport = new AccountsPayableReport();
+                        accountsPayableReport.read(number);
+
+						break;
+
+				}
+				break;
+		}
 	}
+
+
 
 	private static void runSubsystem3(Scanner inputScanner) {
 		System.out.println("Loading: Operator Mode");
