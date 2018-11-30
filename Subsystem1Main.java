@@ -14,6 +14,12 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import java.io.FileReader;
 import java.io.FileNotFoundException;
+/*
+import java.util.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+*/
+
 
 public class Subsystem1Main {
 
@@ -23,46 +29,109 @@ public class Subsystem1Main {
 
         System.out.println("\n\nHello Provider,");
 
-        System.out.println("-Please enter your 9 digit PROVIDER number-");
-        System.out.println("ID Number: ");
-        int providerID = 999999999;//getInt(inputScanner); //Gets input from User
-
-        System.out.println("-Please enter your 9 digit MEMBER number-");
-        System.out.println("ID Number: ");
-        int memberID = 000000000;//getInt(inputScanner); //Gets input from User
-
-        System.out.println("-Please enter your 6 digit service number-");
-        int serviceID = 000000;//getInt(inputScanner); //Gets input from User
-
-        System.out.println("-Please enter the date of service-");
-        String date = "12-31-2018";//getString(inputScanner); //Gets input from User
-
-        System.out.println("-Comment-");
-        String comment  = "Here is my comment";//getString(inputScanner); //Gets input from User
+        int providerID;
+        int serviceID;
+        int memberID;
+        boolean rc; //return code
+        int response; //user responds 1 for yes, 2 for no
+        String comments;
+        String date;
 
         String memberFileLocation = new String();
         String providerFileLocation = new String();
-
         memberFileLocation = "./directories/member_directory";
         providerFileLocation = "./directories/provider_directory";
 
-        //JSONObject key = new JSONObject(); //maybe remove
-        obj.buildObject(providerID, memberID, serviceID, date, comment);
+        //Provider Sign In
+        System.out.println("\n****************************");
+        System.out.println("**Welcome Provider**");
+        System.out.println("****************************\n\n");
 
-        //JSONObject data; //creates new JSONObject
-        //data = obj.buildProviderFile(providerID, memberID, serviceID, date); //Creates JSONObject and stores into data
-        //obj.createFile(providerID, memberID, serviceID, providerFileLocation, data);
-        //System.out.println(data);
+        System.out.println("**Please enter your 9 digit provider number\n");
+        System.out.print("Provider Number: ");
+        providerID = getInt(inputScanner); //Gets input from User
 
-        //obj.read(providerID, "./reports/"+date);
-
-        /*JSONObject key = new JSONObject(); //The key JSONObject is created
-        JSONObject var = obj.returnSub(providerID, "./reports/"+date); //Get the inner part of the JSON file
-        key.put(providerID,var); //Add in the stuff you want to add (still has to be another function)
-        obj.writeToFile("./reports/"+date, key); //Write it to the file*/
-
+        //validates provider login
+        rc = obj.isValid(providerID, providerFileLocation);
+        if(rc){
+            System.out.println("\n****************************");
+            System.out.println("**Provider Number is VALID**");
+            System.out.println("****************************\n");
         }
-        //}
+        else{
+            System.out.println("\nError, Provider Number is INVALID. Goodbye\n");
+            return;
+        }
+
+        do{
+            //get updated date for report
+            /*
+            DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+            Date date = new Date();
+            String currentDate = new String(dateFormat.format(date));
+            */
+
+
+            //member validation & Service Number
+            System.out.println("**Please enter your 6 digit service number\n");
+            System.out.print("Service Number: ");
+            serviceID = getInt(inputScanner); //Gets input from User
+
+            date = new String();
+            System.out.println("**Please type in the date this service was provided (MM-DD-YYY)");
+            System.out.print("Date (MM-DD-YYYY): ");
+            date = getString(inputScanner);
+
+            System.out.println("\n**Please enter the 9 digit member number\n");
+            System.out.print("Member Number: ");
+            memberID = getInt(inputScanner); //Gets input from User
+
+            //validates member login
+            rc = obj.isValid(memberID, memberFileLocation);
+            if(rc){
+                System.out.println("\n****************************");
+                System.out.println("**Member Number is VALID**");
+                System.out.println("****************************\n");
+            }
+            else{
+                System.out.println("\nError, Member Number is INVALID. Goodbye\n");
+                return;
+            }
+
+            //check if member is supended
+            rc = obj.isSuspended(memberID, memberFileLocation);
+            if(rc){
+                System.out.println("\n**Member is Suspended. Please refer patient to billing services**\n");
+                return;
+            }
+            else{
+                System.out.println("\n**Member is NOT Suspended. Proceed with services.**\n");
+            }
+
+            //provider enters comments about visit with member
+            System.out.println("\n**Would you like to write comments about this visit?\n1 - yes\n2 - no\n");
+            response = getInt(inputScanner);
+            if(response == 1){
+                System.out.println("\nPlease type your comments: ");
+                comments = new String();
+                comments = getString(inputScanner);
+            }
+            else{
+                System.out.println("\nYou answered no.\n");
+                comments = null;
+            }
+
+            //Write new data to Provider Report
+            //obj.writeReport(providerID, serviceID, memberFileLocation);
+
+            System.out.println("\n**Would you like to add another visit?\n1 - yes\n2 - no\n");
+            response = getInt(inputScanner);
+
+            obj.buildObject(providerID, memberID, serviceID, date, comments);
+
+        }while(response == 1);
+
+    }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -75,6 +144,7 @@ public class Subsystem1Main {
     private static int getInt(Scanner inputScanner) {
         int return_this;
         return_this = inputScanner.nextInt();
+        inputScanner.nextLine();
         return return_this;
     }
     }
