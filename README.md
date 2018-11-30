@@ -26,7 +26,6 @@ Coding Conventions:
 	Try to keep functions ~25 lines max.
 	Some level of avoiding nesting.
 	No ternary operator.
-	camelCase.
 	Declare variables at the top of the scope they are in.
 	Descriptive variable names.
 	Javadocs are required for public functions.
