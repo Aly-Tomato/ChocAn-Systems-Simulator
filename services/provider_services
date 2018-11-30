@@ -1,1 +1,44 @@
-{}
+{{"014358673": {
+    "11-25-2018": {
+      "Provider number": "0000",
+      "Member number": "44444",
+      "Member name": "alex",
+      "Current dateTime": "11-25-2018 HH:MM:SS",
+      "Service name": "spa",
+      "Service code": "999",
+      "Service fee": "$10.5",
+      "Comments": "comments"
+    },
+    "11-30-2018": {
+      "Provider number": "0000",
+      "Member number": "55555",
+      "Member name": "Michelle",
+      "Current dateTime": "11-25-2018 HH:MM:SS",
+      "Service name": "spa",
+      "Service code": "888",
+      "Service fee": "$20.0",
+      "Comments": "comments"
+    }
+  },
+  "222222244": {
+    "11-25-2018": {
+      "Provider number": "0000",
+      "Member number": "44444",
+      "Member name": "alex",
+      "Current dateTime": "11-25-2018 HH:MM:SS",
+      "Service name": "spa",
+      "Service code": "999",
+      "Service fee": "$70.5",
+      "Comments": "comments"
+    },
+    "11-30-2018": {
+      "Provider number": "0000",
+      "Member number": "55555",
+      "Member name": "Michelle",
+      "Current dateTime": "11-25-2018 HH:MM:SS",
+      "Service name": "spa",
+      "Service code": "888",
+      "Service fee": "$20.0",
+      "Comments": "comments"
+    }
+  }}}
