@@ -29,8 +29,8 @@ public class MemberServices {
     protected int size = 20;
     //protected int [] memDirectory = new int[size];
 //protected ChocAnSystem CAS = new ChocAnSystem();
-    protected Operator OM = new Operator();
-    protected JSONParser parser = new JSONParser();
+    //protected OperatorMode OM = new OperatorMode();
+    //protected JSONParser parser = new JSONParser();
 //protected JSONObject serviceReport = new JSONObject();
 
     protected boolean isValid(int number, String FileLocation) {
@@ -102,8 +102,8 @@ public class MemberServices {
         inner = buildInner(memberID, providerID, serviceID, comment, date);
         datekey.put(date, inner);
 
-        String providerFile = createFile("./reports/");
-        String memberFile = createFile("./memberReports/");
+        String providerFile = createFile("./services/member_services");
+        String memberFile = createFile("./services/provider_services");
 
         JSONObject providerObject = new JSONObject();
         providerObject = createKey(providerFile, providerID, date, datekey, inner);
@@ -119,8 +119,8 @@ public class MemberServices {
         String ID3 = String.format("%06d", serviceID);
 
         try {
-            Object obj1 = parser.parse(new FileReader("./directories/member_directory"));
-            Object obj2 = parser.parse(new FileReader("./directories/provider_directory"));
+            Object obj1 = parser.parse(new FileReader("./services/member_services"));
+            Object obj2 = parser.parse(new FileReader("./services/provider_services"));
 
             JSONObject memberdirectory = (JSONObject) obj1;
             JSONObject providerdirectory = (JSONObject) obj2;
@@ -223,21 +223,19 @@ public class MemberServices {
 
     }
 
-    protected String createFile(String folder) {
+    protected String createFile(String filename) {
 
-        DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+        /*DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
         Date date = new Date();
-        String currentDate = new String(dateFormat.format(date));
-
-        String providerFile = folder + currentDate;
+        String currentDate = new String(dateFormat.format(date));*/
 
         try {
 
-            File outputFile = new File(providerFile);
+            File outputFile = new File(filename);
 
             if (!outputFile.exists()) {
                 outputFile.createNewFile();
-                return providerFile;
+                return filename;
             }
 
         } catch (FileNotFoundException e) {
@@ -247,7 +245,7 @@ public class MemberServices {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return providerFile;
+        return filename;
     }
 
     protected JSONObject createKey(String providerFile, int providerID, String date, JSONObject dateKey, JSONObject inner) { //Checks to see if a key exists
