@@ -15,7 +15,7 @@ import java.io.FileWriter;
 public class MemberReport {
 
     protected String memberFileLocation = "./directories/member_directory";                                                         //main member directory
-    protected String memberServices = "/Users/alexandrallamas/IdeaProjects/cs300_teamcinco4/directories/member_services.json";      //file with all member services
+    protected String memberServices = "./services/member_services.json";      //file with all member services
 
 
     //reads the member directory to find a specific member

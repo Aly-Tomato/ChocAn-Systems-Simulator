@@ -15,7 +15,7 @@ import org.json.simple.parser.ParseException;
 public class ProviderReport {
 
     protected String providerFileLocation = "./directories/provider_directory";                                                         //main member directory
-    protected String providerServices = "/Users/alexandrallamas/IdeaProjects/cs300_teamcinco4/directories/provider_services.json";      //file with all memb
+    protected String providerServices = "./services/provider_services.json";      //file with all memb
 
     //function for writing out to the file
     private void writeProviderInfoFile(String Name, String Number, String Street, String City, String State, String Zip) {

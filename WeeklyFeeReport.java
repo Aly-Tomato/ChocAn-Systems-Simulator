@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class WeeklyFeeReport {
 
-    protected String providerServices = "/Users/alexandrallamas/IdeaProjects/cs300_teamcinco4/directories/provider_services.json";      //file
+    protected String providerServices = "./services/provider_services.json";      //file
     //parse json file
     public void read(int number)
     {

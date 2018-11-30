@@ -10,7 +10,7 @@ import java.io.*;
 public class AccountsPayableReport {
 
 
-    protected String providerServices = "/Users/alexandrallamas/IdeaProjects/cs300_teamcinco4/directories/provider_services.json";      //file
+    protected String providerServices = "./services/provider_services.json";      //file
     //write nested information into json file
     public JSONObject readInfo(String number, JSONObject serviceReport){
 
