@@ -24,7 +24,7 @@ import java.text.SimpleDateFormat;
 public class Subsystem1Main {
 
     public static void main(Scanner inputScanner) {
-        memberServices obj = new memberServices();
+        MemberServices obj = new MemberServices();
         //int ProviderID;
 
         System.out.println("\n\nHello Provider,");
