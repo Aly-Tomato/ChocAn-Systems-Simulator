@@ -177,6 +177,159 @@ public class Operator {
 		return true;
 	}
 
+	// generateNewKey will return a string number that is a unique key of the passed json or arraylist.
+	protected String generateNewKey(int digits, JSONObject jsonData) {
+		String newKey = "";
+		while (true) {
+			for (int i = 0; i < digits; i++)
+				newKey += (int) (Math.random() * 10);
+
+			if (!jsonData.containsKey(newKey))
+				break;
+		}
+		return newKey;
+	}
+	protected String generateNewKey(int digits, ArrayList<String> currentKeys) {
+		String newKey = "";
+		while (true) {
+			for (int i = 0; i < digits; i++)
+				newKey += (int) (Math.random() * 10);
+
+			if (!currentKeys.contains(newKey))
+				break;
+		}
+		return newKey;
+	}
+
+	// promptForString is a helper function that will prompt the user for the promptName and validate that it is only made of spaces and letters,
+	// and that it is not larger than maxLength. This will not work for something like the address which requires a number and then a string,
+	// or the zip/state which have other criteria.
+	protected String promptForString(Scanner systemInputScanner, String promptName, int maxLength) {
+		String returnValue = "";
+		System.out.println("Please enter the " + promptName + " (" + maxLength + " characters max): ");
+		while (true) {
+			System.out.print("> ");
+			returnValue = systemInputScanner.nextLine().trim();
+			if (returnValue.length() == 0)
+				;
+			else if (returnValue.length() > maxLength)
+				System.out.println("Data is too long to be stored.");
+			else if (validateString(returnValue))
+				break;
+			else
+				System.out.println("Please do not enter anything besides characters and spaces.");
+		}
+
+		return returnValue;
+	}
+
+	// validateString will test if theString isn't an int or a double, allowing for spaces.
+	protected boolean validateString(String theString) {
+		for (int i = 0; i < theString.length(); i++)
+			if (!Character.isLetter(theString.charAt(i)))
+				if(theString.charAt(i) != ' ')
+					return false;
+		return true;
+	}
+
+	// promptForStreet is about the same thing as promptForString, but the street has to have
+	// a street number followed by a street name, and this requies additional testing.
+	protected String promptForStreet(Scanner systemInputScanner) {
+		String street = "";
+		System.out.println("Please enter the new provider/member street address (" + streetMaxLength + " characters max, where the street number is first and the street name is after): ");
+		while (true) {
+			street = "";
+			String streetNumber = "";
+			String streetName = "";
+			System.out.print("> ");
+			try {
+				streetNumber += systemInputScanner.nextInt();
+				streetName = systemInputScanner.nextLine();
+				street += (streetNumber + streetName);
+				if (street.length() == 0)
+					;
+				else if (streetName.length() == 0)
+					System.out.println("Please enter a street number followed by the street name.");
+				else if (streetName.charAt(0) != ' ')
+					System.out.println("Please enter a street number followed by the street name, with a space between them.");
+				else if (streetName.length() == 1 && streetName.charAt(0) == ' ')
+					System.out.println("Please enter a street number followed by the street name.");
+				else if (street.length() > streetMaxLength)
+					System.out.println("That street name was too long to be stored.");
+				else if (validateString(streetName))
+					break;
+				else
+					System.out.println("Please do not enter anything besides characters and spaces.");
+			} catch (InputMismatchException error) {
+				System.out.println("An example street address would be (ignoring the brackets): [19939 Trade Way].");
+				systemInputScanner.nextLine(); // clear the buffer
+			}
+		}
+		return street;
+	}
+
+	// promptForState is about the same thing as promptForString, but the state has to be
+	// two letters, and this requies additional testing.
+	protected String promptForState(Scanner systemInputScanner) {
+		String state = "";
+		System.out.println("Please enter the new provider/member's state (" + stateSetLength + " characters): ");
+		while (true) {
+			System.out.print("> ");
+			state = systemInputScanner.nextLine().toUpperCase().trim();
+			if (state.length() == 0)
+				;
+			else if (state.length() != stateSetLength)
+				System.out.println("That data was the wrong size, it must be " + stateSetLength + " digits.");
+			else if (validateString(state) && Character.isLetter(state.charAt(0)) && Character.isLetter(state.charAt(1)))
+				break;
+			else
+				System.out.println("Please do not enter anything besides characters and spaces.");
+		}
+		return state;
+	}
+
+	protected String promptForZip(Scanner systemInputScanner) {
+		String zip = "";
+		System.out.println("Please enter the new provider/member's ZIP code (" + zipSetLength + " characters): ");
+		while (true) {
+			System.out.print("> ");
+			zip = systemInputScanner.nextLine().trim();
+			if (zip.length() == 0)
+				;
+			else if (zip.length() != zipSetLength)
+				System.out.println("That data was the wrong size, it must be " + zipSetLength + " digits.");
+			else if (validateZipCode(zip))
+				break;
+			else
+				System.out.println("Please do not enter anything besides numbers.");
+		}
+		return zip;
+	}
+
+	// validateZipCode will only validate that the passed string is made entirely of digits.
+	protected boolean validateZipCode(String theZip) {
+		for (int i = 0; i < theZip.length(); i++)
+			if (!Character.isDigit(theZip.charAt(i)))
+				return false;
+		return true;
+	}
+
+	// promptForBool will ask the user the message string, append " (Y/n)", and return their response.
+	protected boolean promptForBool(Scanner systemInputScanner, String message) {
+		System.out.println(message + " (Y/n): ");
+		while (true) {
+			System.out.print("> ");
+			String repeatLoop = systemInputScanner.next().toLowerCase();
+			systemInputScanner.nextLine(); // clear the buffer
+			if (!repeatLoop.equals("y") && !repeatLoop.equals("n"))
+				;
+			else if (repeatLoop.equals("y"))
+				return true;
+			else
+				return false;
+		}
+	}
+
 	// writeToFile will write the passed json object to the file location.
 	// This will return false if there is an IOException, if the fileLocation isn't one of two protected file locations.
 	protected boolean writeToFile(String fileLocation, JSONObject newDirectory) {
@@ -322,6 +475,69 @@ public class Operator {
 		return true;
 	}
 
+	// selectUniqueNumber will output the stakeholder or service numbers and names in the passed json,
+	// and handle prompting the user for a valid stakeholder's number which will be returned.
+	// This function will return "" if the passed json is emtpy, and print about it being empty.
+	// Check for the empty return value!!
+	protected String selectUniqueNumber(Scanner systemInputScanner, JSONObject theJson, int length) {
+		String theNumber = "";
+
+		if (theJson.isEmpty()) {
+			System.out.println("There is not data to be chosen.");
+			return theNumber;
+		}
+
+		System.out.println("Please select enter the ID number you would like to work with:");
+		System.out.println();
+		theJson.forEach((key, value) -> {
+				System.out.print((String) ((JSONObject) value).get("name"));
+				System.out.print(": ");
+				System.out.println((String) key);
+		});
+
+		while (true) {
+			System.out.print("> ");
+			theNumber = systemInputScanner.next();
+			systemInputScanner.nextLine(); // clear the buffer
+			if (theNumber.length() != length)
+				System.out.println("That entry is an incorrect length; it must be " + length + " characters long.");
+			else if (!theJson.containsKey(theNumber))
+				System.out.println("Invalid the number. Must be made of integers only and be present on the above list.");
+			else
+				return theNumber;
+		}
+	}
+
+	// rekeyUniqueNumber will change the stakeholder key to the new one, and return the new key.
+	// NOTE: rekeyUniqueNumber assumes the oldNumber is a valid stakeholder key and newNumber
+	// is an unused stakeholder key; use w/ invalid keys may result in undesired behavior.
+	// For best calling, use the below example (taken from editProviderHelper):
+	// providerNumber = rekeyUniqueNumber(providerNumber, generateNewKey(stakeholderNumberSetLength, providersJson), providersJson);
+	protected String rekeyUniqueNumber(String oldNumber, String newNumber, JSONObject theJson) {
+		JSONObject valueInfo = (JSONObject) theJson.remove(oldNumber);
+		theJson.put(newNumber, valueInfo);
+		return newNumber;
+	}
+
+	// promptForStatus is a helper function that will prompt the user for "v" or "s" which correspond to valid and suspended.
+	// and validate that only one of these options was entered
+	protected String promptForStatus(Scanner systemInputScanner) {
+		String returnValue = "";
+		System.out.println("Please enter s to change status to suspended or v to change status to valid");
+		while (true) {
+			System.out.print("> ");
+			returnValue = systemInputScanner.nextLine().trim();
+			if (returnValue.length() == 0)
+				;
+			else if (returnValue.equalsIgnoreCase("v"))
+				return "Valid";
+			else if (returnValue.equalsIgnoreCase("s"))
+				return "Suspended";
+			else
+				System.out.println("Please do not enter anything besides s or v.");
+		}
+	}
+
 	/**
 	 * deleteMember will prompt the user for member in member_directory to delete.
 	 *
@@ -445,143 +661,6 @@ public class Operator {
 		return true;
 	}
 
-	// generateNewKey will return a string number that is a unique key of the passed json or arraylist.
-	protected String generateNewKey(int digits, JSONObject jsonData) {
-		String newKey = "";
-		while (true) {
-			for (int i = 0; i < digits; i++)
-				newKey += (int) (Math.random() * 10);
-
-			if (!jsonData.containsKey(newKey))
-				break;
-		}
-		return newKey;
-	}
-	protected String generateNewKey(int digits, ArrayList<String> currentKeys) {
-		String newKey = "";
-		while (true) {
-			for (int i = 0; i < digits; i++)
-				newKey += (int) (Math.random() * 10);
-
-			if (!currentKeys.contains(newKey))
-				break;
-		}
-		return newKey;
-	}
-
-	// promptForString is a helper function that will prompt the user for the promptName and validate that it is only made of spaces and letters,
-	// and that it is not larger than maxLength. This will not work for something like the address which requires a number and then a string,
-	// or the zip/state which have other criteria.
-	protected String promptForString(Scanner systemInputScanner, String promptName, int maxLength) {
-		String returnValue = "";
-		System.out.println("Please enter the " + promptName + " (" + maxLength + " characters max): ");
-		while (true) {
-			System.out.print("> ");
-			returnValue = systemInputScanner.nextLine().trim();
-			if (returnValue.length() == 0)
-				;
-			else if (returnValue.length() > maxLength)
-				System.out.println("Data is too long to be stored.");
-			else if (validateString(returnValue))
-				break;
-			else
-				System.out.println("Please do not enter anything besides characters and spaces.");
-		}
-
-		return returnValue;
-	}
-
-	// validateString will test if theString isn't an int or a double, allowing for spaces.
-	protected boolean validateString(String theString) {
-		for (int i = 0; i < theString.length(); i++)
-			if (!Character.isLetter(theString.charAt(i)))
-				if(theString.charAt(i) != ' ')
-					return false;
-		return true;
-	}
-
-	// promptForStreet is about the same thing as promptForString, but the street has to have
-	// a street number followed by a street name, and this requies additional testing.
-	protected String promptForStreet(Scanner systemInputScanner) {
-		String street = "";
-		System.out.println("Please enter the new provider/member street address (" + streetMaxLength + " characters max, where the street number is first and the street name is after): ");
-		while (true) {
-			street = "";
-			String streetNumber = "";
-			String streetName = "";
-			System.out.print("> ");
-			try {
-				streetNumber += systemInputScanner.nextInt();
-				streetName = systemInputScanner.nextLine();
-				street += (streetNumber + streetName);
-				if (street.length() == 0)
-					;
-				else if (streetName.length() == 0)
-					System.out.println("Please enter a street number followed by the street name.");
-				else if (streetName.charAt(0) != ' ')
-					System.out.println("Please enter a street number followed by the street name, with a space between them.");
-				else if (streetName.length() == 1 && streetName.charAt(0) == ' ')
-					System.out.println("Please enter a street number followed by the street name.");
-				else if (street.length() > streetMaxLength)
-					System.out.println("That street name was too long to be stored.");
-				else if (validateString(streetName))
-					break;
-				else
-					System.out.println("Please do not enter anything besides characters and spaces.");
-			} catch (InputMismatchException error) {
-				System.out.println("An example street address would be (ignoring the brackets): [19939 Trade Way].");
-				systemInputScanner.nextLine(); // clear the buffer
-			}
-		}
-		return street;
-	}
-
-	// promptForState is about the same thing as promptForString, but the state has to be
-	// two letters, and this requies additional testing.
-	protected String promptForState(Scanner systemInputScanner) {
-		String state = "";
-		System.out.println("Please enter the new provider/member's state (" + stateSetLength + " characters): ");
-		while (true) {
-			System.out.print("> ");
-			state = systemInputScanner.nextLine().toUpperCase().trim();
-			if (state.length() == 0)
-				;
-			else if (state.length() != stateSetLength)
-				System.out.println("That data was the wrong size, it must be " + stateSetLength + " digits.");
-			else if (validateString(state) && Character.isLetter(state.charAt(0)) && Character.isLetter(state.charAt(1)))
-				break;
-			else
-				System.out.println("Please do not enter anything besides characters and spaces.");
-		}
-		return state;
-	}
-
-	protected String promptForZip(Scanner systemInputScanner) {
-		String zip = "";
-		System.out.println("Please enter the new provider/member's ZIP code (" + zipSetLength + " characters): ");
-		while (true) {
-			System.out.print("> ");
-			zip = systemInputScanner.nextLine().trim();
-			if (zip.length() == 0)
-				;
-			else if (zip.length() != zipSetLength)
-				System.out.println("That data was the wrong size, it must be " + zipSetLength + " digits.");
-			else if (validateZipCode(zip))
-				break;
-			else
-				System.out.println("Please do not enter anything besides numbers.");
-		}
-		return zip;
-	}
-
-	// validateZipCode will only validate that the passed string is made entirely of digits.
-	protected boolean validateZipCode(String theZip) {
-		for (int i = 0; i < theZip.length(); i++)
-			if (!Character.isDigit(theZip.charAt(i)))
-				return false;
-		return true;
-	}
-
 	// promptForServices will handle prompting and validating as many services as the user wants to make, and saves them into the passed arraylists.
 	protected void promptForServices(Scanner systemInputScanner, ArrayList<String> serviceNumbers, ArrayList<String> serviceNames, ArrayList<Double> serviceFees) {
 		while (true) {
@@ -645,25 +724,6 @@ public class Operator {
 		}
 
 		return true;
-	}
-
-	// promptForStatus is a helper function that will prompt the user for "v" or "s" which correspond to valid and suspended.
-  // and validate that only one of these options was entered
-	protected String promptForStatus(Scanner systemInputScanner) {
-		String returnValue = "";
-		System.out.println("Please enter s to change status to suspended or v to change status to valid");
-		while (true) {
-			System.out.print("> ");
-			returnValue = systemInputScanner.nextLine().trim();
-			if (returnValue.length() == 0)
-				;
-			else if (returnValue.equalsIgnoreCase("v"))
-				return "Valid";
-			else if (returnValue.equalsIgnoreCase("s"))
-				return "Suspended";
-			else
-				System.out.println("Please do not enter anything besides s or v.");
-		}
 	}
 
 	// printProviderInfo will print the provider's information in a nice format, taking either all the info seperately or as a json object.
@@ -760,23 +820,6 @@ public class Operator {
 		memberStrings[5] = (String) memberJson.get("status");
 
 		return memberStrings;
-	}
-
-
-	// promptForBool will ask the user the message string, append " (Y/n)", and return their response.
-	protected boolean promptForBool(Scanner systemInputScanner, String message) {
-		System.out.println(message + " (Y/n): ");
-		while (true) {
-			System.out.print("> ");
-			String repeatLoop = systemInputScanner.next().toLowerCase();
-			systemInputScanner.nextLine(); // clear the buffer
-			if (!repeatLoop.equals("y") && !repeatLoop.equals("n"))
-				;
-			else if (repeatLoop.equals("y"))
-				return true;
-			else
-				return false;
-		}
 	}
 
 	// buildProviderJson will take the passed info needed to make a new entry in the provider
@@ -942,49 +985,6 @@ public class Operator {
 		return true;
 	}
 
-	// selectUniqueNumber will output the stakeholder or service numbers and names in the passed json,
-	// and handle prompting the user for a valid stakeholder's number which will be returned.
-	// This function will return "" if the passed json is emtpy, and print about it being empty.
-	// Check for the empty return value!!
-	protected String selectUniqueNumber(Scanner systemInputScanner, JSONObject theJson, int length) {
-		String theNumber = "";
-
-		if (theJson.isEmpty()) {
-			System.out.println("There is not data to be chosen.");
-			return theNumber;
-		}
-
-		System.out.println("Please select enter the ID number you would like to work with:");
-		System.out.println();
-		theJson.forEach((key, value) -> {
-				System.out.print((String) ((JSONObject) value).get("name"));
-				System.out.print(": ");
-				System.out.println((String) key);
-		});
-
-		while (true) {
-			System.out.print("> ");
-			theNumber = systemInputScanner.next();
-			systemInputScanner.nextLine(); // clear the buffer
-			if (theNumber.length() != length)
-				System.out.println("That entry is an incorrect length; it must be " + length + " characters long.");
-			else if (!theJson.containsKey(theNumber))
-				System.out.println("Invalid the number. Must be made of integers only and be present on the above list.");
-			else
-				return theNumber;
-		}
-	}
-
-	// rekeyUniqueNumber will change the stakeholder key to the new one, and return the new key.
-	// NOTE: rekeyUniqueNumber assumes the oldNumber is a valid stakeholder key and newNumber
-	// is an unused stakeholder key; use w/ invalid keys may result in undesired behavior.
-	// For best calling, use the below example (taken from editProviderHelper):
-	// providerNumber = rekeyUniqueNumber(providerNumber, generateNewKey(stakeholderNumberSetLength, providersJson), providersJson);
-	protected String rekeyUniqueNumber(String oldNumber, String newNumber, JSONObject theJson) {
-		JSONObject valueInfo = (JSONObject) theJson.remove(oldNumber);
-		theJson.put(newNumber, valueInfo);
-		return newNumber;
-	}
 
 	// editProviderServices will allow for editing of the different services offered by the passed provider.
 	protected void editProviderServices(Scanner systemInputScanner, JSONObject providerJson) {
