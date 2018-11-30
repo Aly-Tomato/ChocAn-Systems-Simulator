@@ -1,4 +1,4 @@
-{{"014358673": {
+{"014358673": {
     "11-25-2018": {
       "Provider number": "0000",
       "Member number": "44444",
@@ -41,4 +41,5 @@
       "Service fee": "$20.0",
       "Comments": "comments"
     }
-  }}}
+  }
+}
