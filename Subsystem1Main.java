@@ -46,8 +46,8 @@ public class Subsystem1Main {
         memberFileLocation = "./directories/member_directory";
         providerFileLocation = "./directories/provider_directory";
 
-        JSONObject key = new JSONObject(); //maybe remove
-        key = obj.buildObject(providerID, memberID, serviceID, date, comment);
+        //JSONObject key = new JSONObject(); //maybe remove
+        obj.buildObject(providerID, memberID, serviceID, date, comment);
 
         //JSONObject data; //creates new JSONObject
         //data = obj.buildProviderFile(providerID, memberID, serviceID, date); //Creates JSONObject and stores into data
