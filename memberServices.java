@@ -1,0 +1,315 @@
+//Class declaration for memberServices
+//sub-architecture 1
+//allows the provider to add services provided to member for billing
+
+import java.io.File;
+import java.io.BufferedWriter;
+import java.io.BufferedReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.FileReader;
+import java.util.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.io.FileNotFoundException;
+
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
+import org.json.simple.JSONArray;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+public class memberServices {
+
+    //data fields
+    protected int provider; //9-digit provider#
+    //protected int member;  // 9-digit provider#
+    protected String status;
+    protected String comments;
+    protected int size = 20;
+    //protected int [] memDirectory = new int[size];
+//protected ChocAnSystem CAS = new ChocAnSystem();
+    protected OperatorMode OM = new OperatorMode();
+    protected JSONParser parser = new JSONParser();
+//protected JSONObject serviceReport = new JSONObject();
+
+    protected boolean isValid(int number, String FileLocation) {
+        //check if member number is appropriate length
+        if (number < 100000000 || number > 999999999) {
+            return false;
+        }
+
+        String ID = String.format("%09d", number);
+        JSONParser parser = new JSONParser();
+        try {
+            //Object obj = parser.parse(new FileReader("providerDirectory.json"));
+            Object obj = parser.parse(new FileReader(FileLocation));
+            JSONObject providerJSON = (JSONObject) obj;
+            JSONObject list = (JSONObject) providerJSON.get(ID);
+
+            return true;
+
+        }
+        //catch(FileNotFoundException e){e.printStackTrace();}
+        catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return false;
+
+    }
+
+    protected boolean isSuspended(int number, String memberFileLocation) {
+        //check if member number is appropriate length
+        if (number < 100000000 || number > 999999999) {
+            return false;
+        }
+
+
+        String ID = String.format("%09d", number);
+        JSONParser parser = new JSONParser();
+        try {
+            Object obj = parser.parse(new FileReader(memberFileLocation));
+            JSONObject providerJSON = (JSONObject) obj;
+            JSONObject list = (JSONObject) providerJSON.get(ID);
+
+            String status = new String();
+            status = (String) list.get("status");
+            return status.equals("Suspended");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return false;
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    protected boolean buildObject(int providerID, int memberID, int serviceID, String date, String comment) {
+        JSONObject datekey = new JSONObject();
+        JSONObject inner = new JSONObject();
+
+        inner = buildInner(memberID, providerID, serviceID, comment, date);
+        datekey.put(date, inner);
+
+        String providerFile = createFile("./reports/");
+        String memberFile = createFile("./memberReports/");
+
+        JSONObject providerObject = new JSONObject();
+        providerObject = createKey(providerFile, providerID, date, datekey, inner);
+        writeToFile(providerFile, providerObject);
+
+        return true;
+    }
+
+    protected JSONObject buildInner(int memberID, int providerID, int serviceID, String comment, String date) {
+        JSONObject data = new JSONObject();
+        String ID1 = String.format("%09d", memberID);
+        String ID2 = String.format("%09d", providerID);
+        String ID3 = String.format("%06d", serviceID);
+
+        try {
+            Object obj1 = parser.parse(new FileReader("./directories/member_directory"));
+            Object obj2 = parser.parse(new FileReader("./directories/provider_directory"));
+
+            JSONObject memberdirectory = (JSONObject) obj1;
+            JSONObject providerdirectory = (JSONObject) obj2;
+
+
+            JSONObject memberfile = (JSONObject) memberdirectory.get(ID1);
+            JSONObject providerfile = (JSONObject) providerdirectory.get(ID2);
+
+            JSONObject services = (JSONObject) providerfile.get("serviceNumbers");
+            JSONObject serviceInfo = (JSONObject) services.get(ID3);
+
+            String serviceName = (String) serviceInfo.get("name");
+            double serviceFee = (double) serviceInfo.get("fee");
+
+            String memberName = (String) memberfile.get("name");
+
+            data.put("MemberID:", ID1);
+            data.put("MemberName:", memberName);
+            data.put("ServiceID:", ID3);
+            data.put("ServiceName:", serviceName);
+            data.put("SeviceFee:", serviceFee);
+            data.put("Comment", comment);
+
+            String providerName = (String) providerfile.get("name");
+            buildMemberObject(date, ID1, ID2, providerName, serviceName);
+
+            return data;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
+
+    protected void buildMemberObject(String date, String memberID, String providerID, String providerName, String serviceName) {
+        JSONObject datekey = new JSONObject();
+        JSONObject inner = new JSONObject();
+        String memberFile = createFile("./memberReports/");
+
+        inner = buildInnerMember(memberID, providerID, providerName, serviceName);
+        //datekey.put(date,inner);
+
+        JSONObject memberObject = new JSONObject();
+        memberObject = createMemberKey(date, inner, memberFile);
+        writeToFile(memberFile, memberObject);
+    }
+
+    protected JSONObject createMemberKey(String date, JSONObject datekey, String memberFile) {
+
+        try {
+
+            BufferedReader br1 = new BufferedReader(new FileReader(memberFile));
+
+            if (br1.readLine() == null) { //IF FILE IS EMPTY, CREATE NEW PROV KEY
+                JSONObject object = new JSONObject();
+                object.put(date, datekey);
+                //writeToFile(memberFile, object);
+
+                return object;
+            } else { //not empty
+
+                FileReader reader = new FileReader(memberFile);
+                JSONObject object = (JSONObject) parser.parse(reader);
+
+                if (object.containsKey(date)) {
+
+                    object.put(date, datekey);
+                    return object;
+
+                } else { //IF THE PROV KEY ISN'T FOUND, ADD IN A NEW PROV KEY
+                    object.put(date, datekey);
+                    return object;
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    protected JSONObject buildInnerMember(String memberID, String providerID, String providerName, String serviceName) {
+        JSONObject data = new JSONObject();
+
+        data.put("MemberID", memberID);
+        data.put("ProviderID", providerID);
+        data.put("ProviderName", providerName);
+        data.put("ServiceName", serviceName);
+        return data;
+
+    }
+
+    protected String createFile(String folder) {
+
+        DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+        Date date = new Date();
+        String currentDate = new String(dateFormat.format(date));
+
+        String providerFile = folder + currentDate;
+
+        try {
+
+            File outputFile = new File(providerFile);
+
+            if (!outputFile.exists()) {
+                outputFile.createNewFile();
+                return providerFile;
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return providerFile;
+    }
+
+    protected JSONObject createKey(String providerFile, int providerID, String date, JSONObject dateKey, JSONObject inner) { //Checks to see if a key exists
+        String key = String.format("%09d", providerID);
+
+        try {
+
+            BufferedReader br1 = new BufferedReader(new FileReader(providerFile));
+
+            if (br1.readLine() == null) { //IF FILE IS EMPTY, CREATE NEW PROV KEY
+                JSONObject object = new JSONObject();
+                object.put(key, dateKey);
+
+                return object;
+            } else {
+
+                FileReader reader = new FileReader(providerFile);
+                JSONObject object = (JSONObject) parser.parse(reader);
+
+                if (object.containsKey(key)) {
+
+                    dateKey.put(date, inner);
+
+                    JSONObject prov = (JSONObject) object.get(key);
+
+                    prov.put(date, inner);
+                    return object;
+                } else { //IF THE PROV KEY ISN'T FOUND, ADD IN A NEW PROV KEY
+                    object.put(key, dateKey);
+
+                    return object;
+                }
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    protected boolean writeToFile(String fileLocation, JSONObject newDirectory) {
+        try {
+            //if (!directoryValidation(fileLocation))
+            //return false;
+            File outputFile = new File(fileLocation);
+            BufferedWriter outputFileWriter = new BufferedWriter(new FileWriter(outputFile));
+
+            outputFileWriter.write(JSONValue.toJSONString(newDirectory));
+            outputFileWriter.close();
+
+        } catch (IOException error) {
+            error.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+}
+
