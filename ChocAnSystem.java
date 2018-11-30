@@ -97,7 +97,7 @@ public class ChocAnSystem {
 
 		switch (action) {
 
-		    //user is a member
+			//user is a member
 			case 1:
 				System.out.println("\nPlease enter the members ID number...");
 
@@ -106,10 +106,10 @@ public class ChocAnSystem {
 
 				MemberReport memberReport = new MemberReport();
 
-                memberReport.read(number);
+				memberReport.read(number);
 				break;
 
-            //user is a provider
+				//user is a provider
 			case 2:
 				System.out.println("\nChoose a report to generate:");
 				System.out.println("1. Provider report (providerReports)");
@@ -129,22 +129,22 @@ public class ChocAnSystem {
 						return;
 
 					case 1:
-                        ProviderReport providerReport = new ProviderReport();
+						ProviderReport providerReport = new ProviderReport();
 
-                        providerReport.read(number);
-                        break;
+						providerReport.read(number);
+						break;
 
 					case 2:
 
-                        WeeklyFeeReport weeklyFeeReport = new WeeklyFeeReport();
-                        weeklyFeeReport.read(number);
-                        break;
+						WeeklyFeeReport weeklyFeeReport = new WeeklyFeeReport();
+						weeklyFeeReport.read(number);
+						break;
 
 				}
 
 				break;
 
-            //user is a manager
+				//user is a manager
 			case 3:
 				System.out.println("\nChoose a report to generate:");
 				System.out.println("1. Member report (memberReports)");
@@ -163,26 +163,26 @@ public class ChocAnSystem {
 						return;
 
 					case 1:
-                        System.out.println("\nPlease enter the members ID number...");
+						System.out.println("\nPlease enter the members ID number...");
 
-                        number = inputScanner.nextInt();
-                        inputScanner.reset();
+						number = inputScanner.nextInt();
+						inputScanner.reset();
 
-                        MemberReport memberReportM = new MemberReport();
+						MemberReport memberReportM = new MemberReport();
 
-                        memberReportM.read(number);
-                        break;
+						memberReportM.read(number);
+						break;
 
 					case 2:
-                        System.out.println("\nPlease enter the providers ID number...");
+						System.out.println("\nPlease enter the providers ID number...");
 
-                        number = inputScanner.nextInt();
-                        inputScanner.reset();
+						number = inputScanner.nextInt();
+						inputScanner.reset();
 
-                        ProviderReport providerReportM = new ProviderReport();
+						ProviderReport providerReportM = new ProviderReport();
 
-                        providerReportM.read(number);
-                        break;
+						providerReportM.read(number);
+						break;
 
 
 					case 3:
@@ -192,14 +192,14 @@ public class ChocAnSystem {
 						number = inputScanner.nextInt();
 						inputScanner.reset();
 
-					    WeeklyFeeReport weeklyFeeReportM = new WeeklyFeeReport();
-					    weeklyFeeReportM.read(number);
+						WeeklyFeeReport weeklyFeeReportM = new WeeklyFeeReport();
+						weeklyFeeReportM.read(number);
 						break;
 
 					case 4:
 
-                        AccountsPayableReport accountsPayableReport = new AccountsPayableReport();
-                        accountsPayableReport.read(number);
+						AccountsPayableReport accountsPayableReport = new AccountsPayableReport();
+						accountsPayableReport.read(number);
 
 						break;
 

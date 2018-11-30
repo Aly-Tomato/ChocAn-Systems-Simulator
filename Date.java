@@ -3,12 +3,12 @@ import java.time.format.DateTimeFormatter;
 
 public class Date {
 
-    public static String func() {
+	public static String func() {
 
-        DateTimeFormatter date = DateTimeFormatter.ofPattern("yyyy_MM_dd");
-        LocalDateTime now = LocalDateTime.now();
+		DateTimeFormatter date = DateTimeFormatter.ofPattern("yyyy_MM_dd");
+		LocalDateTime now = LocalDateTime.now();
 
-        return date.format(now);
-    }
+		return date.format(now);
+	}
 
 }
