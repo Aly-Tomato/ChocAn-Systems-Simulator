@@ -3,4 +3,6 @@
      {"zipCode":"44444","city":"West Linn","street":"205 Apple Ln","name":"Providence","state":"OR","status":"Suspended"},
   "123456789":
      {"zipCode":"97045","city":"Oregon City","street":"105 McMin St","name":"Kaiser","state":"OR","status":"Valid"}
+  "999999999":
+     {"zipCode":"97045","city":"Oregon City","street":"105 McMin St","name":"Kaiser","state":"OR","status":"Valid"}
 }

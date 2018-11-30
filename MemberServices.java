@@ -24,7 +24,6 @@ public class MemberServices{
   //data fields
   protected int provider; //9-digit provider# 
   //protected int member;  // 9-digit provider#
-  protected String status;
   protected String comments;
   protected int size = 20;
   protected Operator OM = new Operator();
@@ -63,6 +62,7 @@ public class MemberServices{
         return false;
       }
 
+
      String ID = String.format("%09d", number);
      JSONParser parser = new JSONParser();
      try{
@@ -70,8 +70,8 @@ public class MemberServices{
          JSONObject providerJSON = (JSONObject) obj;
          JSONObject list = (JSONObject) providerJSON.get(ID);
 
-         String status = (String) list.get("status");
-         System.out.println(status);
+         String status = new String();
+         status = (String)list.get("status");
          return status.equals("Suspended");
 
      }

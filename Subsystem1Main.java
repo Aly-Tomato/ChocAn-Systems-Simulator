@@ -18,7 +18,7 @@ public class Subsystem1Main {
 
     public static void main(Scanner inputScanner) {
         //data members
-        memberServices obj = new memberServices();
+        MemberServices obj = new MemberServices();
         int providerID;
         int serviceID;
         int memberID;
@@ -44,7 +44,7 @@ public class Subsystem1Main {
         providerID = getInt(inputScanner); //Gets input from User
 
         //validates provider login
-        rc = obj.isValid(providerID, memberFileLocation);
+        rc = obj.isValid(providerID, providerFileLocation);
         if(rc){
           System.out.println("\n****************************");
           System.out.println("**Provider Number is VALID**");
@@ -105,7 +105,7 @@ public class Subsystem1Main {
             //Write new data to Provider Report
             obj.writeReport(providerID, serviceID, memberFileLocation);
 
-            System.out.println("**Would you like to add another visit?\n1 - yes\n2 - no\n");
+            System.out.println("\n**Would you like to add another visit?\n1 - yes\n2 - no\n");
             response = getInt(inputScanner);
 
         }while(response == 1);
