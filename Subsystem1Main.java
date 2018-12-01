@@ -30,8 +30,8 @@ public class Subsystem1Main {
 		System.out.println("\n\nHello Provider,");
 
 		int providerID;
-		int serviceID;
 		int memberID;
+		int serviceID;
 		boolean rc; //return code
 		int response; //user responds 1 for yes, 2 for no
 		String comments;
